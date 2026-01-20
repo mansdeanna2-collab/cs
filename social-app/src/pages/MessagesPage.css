@@ -564,14 +564,3 @@
 .light-theme .system-panel {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }
-
-/* Animations */
-@keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-}
-
-@keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
-}

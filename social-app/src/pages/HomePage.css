@@ -726,27 +726,6 @@
   z-index: 1;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes colorPulse {
-  0%, 100% { filter: hue-rotate(0deg) brightness(1); }
-  50% { filter: hue-rotate(15deg) brightness(1.1); }
-}
-
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-@keyframes ripple {
-  0% { transform: scale(1); opacity: 0.3; }
-  100% { transform: scale(1.8); opacity: 0; }
-}
-
 /* Light theme specific styles */
 .light-theme .home-page {
   background: var(--bg-primary);

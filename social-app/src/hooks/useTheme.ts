@@ -4,14 +4,14 @@ export type Theme = 'light' | 'dark';
 
 /**
  * Custom hook to manage time-based theme switching
- * Light theme: 7:00 AM (7) to 7:00 PM (19)
- * Dark theme: 7:00 PM (19) to 7:00 AM (7)
+ * Light theme: 7:00 AM (hour 7) to 6:59 PM (hour 18)
+ * Dark theme: 7:00 PM (hour 19) to 6:59 AM (hour 6)
  */
 export const useTheme = () => {
   const getThemeByTime = useCallback((): Theme => {
     const hour = new Date().getHours();
-    // Light theme from 7:00 AM to 6:59 PM (7-18)
-    // Dark theme from 7:00 PM to 6:59 AM (19-6)
+    // Light theme from 7:00 AM (hour >= 7) to 6:59 PM (hour < 19)
+    // Dark theme from 7:00 PM (hour >= 19) to 6:59 AM (hour < 7)
     return hour >= 7 && hour < 19 ? 'light' : 'dark';
   }, []);
 
