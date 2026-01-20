@@ -1,0 +1,36 @@
+# 依赖目录
+node_modules
+npm-debug.log
+
+# 构建产物
+build
+dist
+
+# 开发工具
+.git
+.gitignore
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 编辑器
+.vscode
+.idea
+*.swp
+*.swo
+
+# 测试
+coverage
+*.test.tsx
+*.test.ts
+
+# 文档
+README.md
+DOCKER_GUIDE.md
+*.md
+
+# Docker
+Dockerfile
+docker-compose.yml
+.dockerignore

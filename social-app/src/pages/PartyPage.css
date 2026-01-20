@@ -551,21 +551,23 @@
   z-index: 1;
 }
 
-/* Light theme */
-.light-theme .party-page {
+/* Enhanced Light Theme Styles */
+.party-page {
   background: var(--bg-primary);
 }
 
-.light-theme .live-card {
+.live-card {
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
-.light-theme .room-card {
+.room-card {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
-.light-theme .category-card {
+.category-card {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.04);
 }
 
 @media (max-width: 430px) {

@@ -544,23 +544,25 @@
   text-overflow: ellipsis;
 }
 
-/* Light theme styles */
-.light-theme .messages-page {
+/* Enhanced Light Theme Styles */
+.messages-page {
   background: var(--bg-primary);
 }
 
-.light-theme .message-item {
+.message-item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.notification-item {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.light-theme .notification-item {
+.search-bar {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
-.light-theme .search-bar {
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-}
-
-.light-theme .system-panel {
+.system-panel {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
 }

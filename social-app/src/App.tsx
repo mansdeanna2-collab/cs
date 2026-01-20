@@ -5,11 +5,9 @@ import HomePage from './pages/HomePage';
 import PartyPage from './pages/PartyPage';
 import MessagesPage from './pages/MessagesPage';
 import ProfilePage from './pages/ProfilePage';
-import useTheme from './hooks/useTheme';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
-  const { theme } = useTheme();
 
   const renderPage = () => {
     switch (activeTab) {
@@ -27,7 +25,7 @@ function App() {
   };
 
   return (
-    <div className={`app-container ${theme === 'light' ? 'light-theme' : 'dark-theme'}`}>
+    <div className="app-container light-theme">
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>

@@ -12,17 +12,10 @@
   justify-content: space-around;
   align-items: center;
   padding: 8px 16px 24px;
-  border-top: 1px solid rgba(108, 99, 255, 0.15);
-  z-index: 1000;
-  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.3);
-  transition: all var(--transition-normal);
-}
-
-/* Light theme nav adjustments */
-.light-theme .bottom-nav {
-  background: var(--gradient-nav);
   border-top: 1px solid rgba(108, 99, 255, 0.1);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  transition: all var(--transition-normal);
 }
 
 .nav-item {
