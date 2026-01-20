@@ -500,7 +500,7 @@
 .fab-create {
   position: fixed;
   bottom: 100px;
-  right: calc(50% - 195px);
+  right: calc(50% - var(--fab-offset-from-center));
   width: 56px;
   height: 56px;
   background: var(--gradient-primary);

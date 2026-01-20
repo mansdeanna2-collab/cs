@@ -44,6 +44,10 @@
   --font-size-xl: 18px;
   --font-size-2xl: 24px;
   --font-size-3xl: 32px;
+  
+  /* Layout */
+  --container-max-width: 430px;
+  --fab-offset-from-center: 195px; /* (container-max-width / 2) - FAB margin */
 }
 
 * {
