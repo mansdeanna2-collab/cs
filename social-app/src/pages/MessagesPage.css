@@ -2,6 +2,7 @@
   padding-bottom: 100px;
   background: var(--bg-primary);
   min-height: 100vh;
+  transition: background-color var(--transition-slow);
 }
 
 /* Header */
@@ -14,27 +15,38 @@
   top: 0;
   background: var(--bg-primary);
   z-index: 100;
+  transition: background var(--transition-normal);
+}
+
+/* Light theme */
+.light-theme .messages-header {
+  background: var(--bg-primary);
 }
 
 .page-title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 26px;
+  font-weight: 800;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  letter-spacing: -0.02em;
 }
 
 .title-emoji {
-  font-size: 28px;
+  font-size: 30px;
+  animation: bounce 2.5s ease-in-out infinite;
+  filter: drop-shadow(0 3px 6px rgba(108, 99, 255, 0.3));
 }
 
 .total-badge {
   font-size: 12px;
-  background: var(--secondary-color);
+  background: var(--gradient-primary);
   color: white;
-  padding: 2px 8px;
-  border-radius: 10px;
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(108, 99, 255, 0.4);
+  animation: pulse 2s infinite;
 }
 
 .header-actions {
@@ -43,19 +55,21 @@
 }
 
 .header-btn {
-  width: 40px;
-  height: 40px;
+  width: 42px;
+  height: 42px;
   background: var(--bg-tertiary);
   border: none;
   border-radius: var(--border-radius-full);
   font-size: 18px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
+  box-shadow: var(--shadow-sm);
 }
 
 .header-btn:hover {
-  background: var(--primary-color);
-  transform: scale(1.05);
+  background: var(--gradient-primary);
+  transform: scale(1.1) rotate(10deg);
+  box-shadow: var(--shadow-glow);
 }
 
 /* Search Bar */
@@ -528,4 +542,36 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* Light theme styles */
+.light-theme .messages-page {
+  background: var(--bg-primary);
+}
+
+.light-theme .message-item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .notification-item {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .search-bar {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.light-theme .system-panel {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* Animations */
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
 }
