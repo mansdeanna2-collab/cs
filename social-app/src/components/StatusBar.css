@@ -1,0 +1,115 @@
+/* Status Bar - Phone Status Display */
+.status-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 20px 6px;
+  background: transparent;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  min-height: 28px;
+}
+
+.status-left,
+.status-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 80px;
+}
+
+.status-left {
+  justify-content: flex-start;
+}
+
+.status-right {
+  justify-content: flex-end;
+}
+
+.status-center {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.notch {
+  width: 100px;
+  height: 28px;
+  background: #000;
+  border-radius: 0 0 18px 18px;
+  display: none; /* Hidden for now, enable for notch devices */
+}
+
+.status-time {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1E293B;
+  letter-spacing: -0.3px;
+}
+
+.status-signal,
+.status-wifi,
+.status-battery {
+  display: flex;
+  align-items: center;
+  color: #1E293B;
+}
+
+.status-signal svg,
+.status-wifi svg {
+  width: 16px;
+  height: 12px;
+}
+
+.status-battery {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+}
+
+.status-battery svg {
+  width: 24px;
+  height: 12px;
+}
+
+.battery-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #1E293B;
+}
+
+/* Ensure status bar text is always visible on gradient backgrounds */
+.profile-page .status-bar,
+.party-page .status-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+}
+
+.profile-page .status-bar .status-time,
+.profile-page .status-bar .status-signal,
+.profile-page .status-bar .status-wifi,
+.profile-page .status-bar .status-battery,
+.profile-page .status-bar .battery-text,
+.party-page .status-bar .status-time,
+.party-page .status-bar .status-signal,
+.party-page .status-bar .status-wifi,
+.party-page .status-bar .status-battery,
+.party-page .status-bar .battery-text {
+  color: #FFFFFF;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.profile-page .status-bar .status-signal svg,
+.profile-page .status-bar .status-wifi svg,
+.profile-page .status-bar .status-battery svg,
+.party-page .status-bar .status-signal svg,
+.party-page .status-bar .status-wifi svg,
+.party-page .status-bar .status-battery svg {
+  filter: drop-shadow(0 1px 3px rgba(0, 0, 0, 0.3));
+  color: #FFFFFF;
+  fill: #FFFFFF;
+}
