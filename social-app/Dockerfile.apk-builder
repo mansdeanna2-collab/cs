@@ -21,7 +21,7 @@ ENV ANDROID_SDK_ROOT=/opt/android-sdk
 ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/34.0.0"
 
 # 设置 Java 环境变量
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
 
 # 设置时区
 ENV TZ=Asia/Shanghai
@@ -38,8 +38,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     git \
     ca-certificates \
     gnupg \
-    # Java JDK 17
-    openjdk-17-jdk \
+    # Java JDK 21 (required by Capacitor Android)
+    openjdk-21-jdk \
     # 构建工具
     build-essential \
     # 32位库支持 (Android SDK需要)
