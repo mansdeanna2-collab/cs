@@ -190,7 +190,14 @@ install_android_sdk() {
         # 如果 wget 失败，尝试 curl
         if ! curl -L -o "$temp_dir/$cmdline_tools_zip" "$download_url" 2>/dev/null; then
             echo "❌ 下载 Android 命令行工具失败"
-            echo "   请手动下载: $download_url"
+            echo ""
+            echo "   请手动下载并安装:"
+            echo "   1. 下载: $download_url"
+            echo "   2. 解压到: $sdk_root/cmdline-tools/latest"
+            echo "   3. 设置环境变量:"
+            echo "      export ANDROID_HOME=$sdk_root"
+            echo "      export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin"
+            echo "   4. 重新运行此脚本"
             return 1
         fi
     fi
@@ -212,7 +219,8 @@ install_android_sdk() {
     export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
     
     # 接受许可协议并安装必要的组件
-    echo "   接受许可协议..."
+    echo "   ⚠️  接受 Android SDK 许可协议..."
+    echo "   (包括 Google Play 服务, Android SDK 等许可协议)"
     yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
     
     echo "   安装 Android SDK 平台工具和构建工具..."
@@ -258,9 +266,8 @@ clean_gradle_cache() {
     if [ -f "android/gradlew" ]; then
         (cd android && ./gradlew --stop 2>/dev/null || true)
     fi
-    # 使用 pkill 杀掉残留的 gradle 进程 (更彻底)
-    pkill -9 -f "gradle" 2>/dev/null || true
-    sleep 1
+    # 等待守护进程停止
+    sleep 2
     
     # 检查缓存目录是否存在
     if [ -d "$gradle_home/caches" ]; then
@@ -614,10 +621,28 @@ run_gradle_build() {
 # 检测 Gradle 缓存损坏错误
 is_gradle_cache_error() {
     local output="$1"
-    # 检测多种缓存损坏相关的错误模式
-    if echo "$output" | grep -qE "(Failed to create Jar file|Could not create entry|Couldn't create parent directory|java\.util\.zip\.ZipException|Failed to read entry|Corrupt|Unable to delete stale cache|bcprov-jdk|bouncycastle|Lock file|lock held by)"; then
-        return 0
-    fi
+    
+    # 定义缓存损坏相关的错误模式数组
+    local patterns=(
+        "Failed to create Jar file"
+        "Could not create entry"
+        "Couldn't create parent directory"
+        "java\.util\.zip\.ZipException"
+        "Failed to read entry"
+        "Corrupt"
+        "Unable to delete stale cache"
+        "bcprov-jdk"
+        "bouncycastle"
+        "Lock file"
+        "lock held by"
+    )
+    
+    # 检测任一模式
+    for pattern in "${patterns[@]}"; do
+        if echo "$output" | grep -qE "$pattern"; then
+            return 0
+        fi
+    done
     return 1
 }
 
