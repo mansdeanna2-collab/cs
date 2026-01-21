@@ -145,8 +145,7 @@ button:active, .touchable:active {
   opacity: 0.9;
 }
 
-.app-container input,
-.app-container textarea,
+.app-container .editable-field,
 .app-container [contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;

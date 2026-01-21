@@ -6,14 +6,14 @@ import PartyPage from './pages/PartyPage';
 import MessagesPage from './pages/MessagesPage';
 import ProfilePage from './pages/ProfilePage';
 
-const EDITABLE_SELECTOR = 'input, textarea, [contenteditable="true"]';
+const EDITABLE_SELECTOR = '.editable-field';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
-    if (target.closest(EDITABLE_SELECTOR) || target.isContentEditable) {
+    if (target.closest(EDITABLE_SELECTOR) || target.isContentEditable === true) {
       return;
     }
     event.preventDefault();

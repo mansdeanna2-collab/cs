@@ -138,7 +138,7 @@ const MessagesPage: React.FC = () => {
         <input 
           type="text" 
           placeholder="搜索联系人或群聊" 
-          className="search-input"
+          className="search-input editable-field"
           onFocus={() => setSearchFocused(true)}
           onBlur={() => setSearchFocused(false)}
         />
