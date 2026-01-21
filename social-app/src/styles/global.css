@@ -129,6 +129,9 @@ body {
   overflow: hidden;
   transition: background-color var(--transition-slow);
   padding-top: 12px;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Global Touch Feedback */
@@ -142,16 +145,11 @@ button:active, .touchable:active {
   opacity: 0.9;
 }
 
-button, .touchable, .nav-item, .menu-item, .card, .game-card, .action-item, .header-btn, .icon-btn, .top-btn {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-
-img, svg, .nav-icon, .game-icon, .action-icon {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
+.app-container input,
+.app-container textarea,
+.app-container [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Theme transition overlay */
