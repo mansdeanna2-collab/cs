@@ -31,6 +31,7 @@
   --bg-tertiary: #F1F5F9;
   --bg-card: #E2E8F0;
   --bg-elevated: #FFFFFF;
+  --header-bg: #FFFFFF;
   
   --text-primary: #1E293B;
   --text-secondary: #475569;
@@ -60,30 +61,30 @@
   --border-radius-xl: 24px;
   --border-radius-full: 50%;
   
-  /* Spacing */
-  --spacing-xs: 4px;
-  --spacing-sm: 8px;
-  --spacing-md: 16px;
-  --spacing-lg: 24px;
-  --spacing-xl: 32px;
+  /* Spacing - Compact for mobile */
+  --spacing-xs: 3px;
+  --spacing-sm: 6px;
+  --spacing-md: 12px;
+  --spacing-lg: 18px;
+  --spacing-xl: 24px;
   
-  /* Font Sizes */
-  --font-size-xs: 10px;
-  --font-size-sm: 12px;
-  --font-size-md: 14px;
-  --font-size-lg: 16px;
-  --font-size-xl: 18px;
-  --font-size-2xl: 24px;
-  --font-size-3xl: 32px;
+  /* Font Sizes - Optimized for mobile */
+  --font-size-xs: 9px;
+  --font-size-sm: 11px;
+  --font-size-md: 13px;
+  --font-size-lg: 15px;
+  --font-size-xl: 17px;
+  --font-size-2xl: 22px;
+  --font-size-3xl: 28px;
   
   /* Transitions */
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   
-  /* Layout */
-  --container-max-width: 430px;
-  --fab-offset-from-center: 195px;
+  /* Layout - Responsive */
+  --container-max-width: min(100vw, 430px);
+  --fab-offset-from-center: min(195px, calc(50vw - 30px));
 }
 
 * {
@@ -120,13 +121,30 @@ body {
 
 /* Mobile Container */
 .app-container {
-  max-width: 430px;
+  max-width: var(--container-max-width);
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
   background: var(--bg-primary);
   overflow: hidden;
   transition: background-color var(--transition-slow);
+}
+
+/* Global Touch Feedback */
+button, .touchable {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+button:active, .touchable:active {
+  transform: scale(0.96);
+  opacity: 0.9;
+}
+
+/* Prevent text selection on interactive elements */
+button, a, .touchable, .nav-item, .menu-item, .card {
+  -webkit-user-select: none;
+  user-select: none;
 }
 
 /* Theme transition overlay */
