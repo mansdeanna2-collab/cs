@@ -119,7 +119,10 @@ install_java() {
         macos)
             if command -v brew &> /dev/null; then
                 brew install openjdk@17
-                sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk 2>/dev/null
+                BREW_PREFIX=$(brew --prefix openjdk@17 2>/dev/null)
+                if [ -n "$BREW_PREFIX" ] && [ -d "$BREW_PREFIX/libexec/openjdk.jdk" ]; then
+                    sudo ln -sfn "$BREW_PREFIX/libexec/openjdk.jdk" /Library/Java/JavaVirtualMachines/openjdk-17.jdk 2>/dev/null
+                fi
             else
                 echo "❌ 请先安装 Homebrew: https://brew.sh"
                 return 1
@@ -184,16 +187,18 @@ else
     MISSING_DEPS+=("nodejs")
 fi
 
-# 检查 npm
+# 检查 npm (npm 通常随 Node.js 一起安装)
 echo -n "   npm:     "
 if command -v npm &> /dev/null; then
     NPM_VERSION=$(npm --version)
     echo "✅ v$NPM_VERSION"
 else
     echo "❌ 未安装"
-    if [[ ! " ${MISSING_DEPS[@]} " =~ " nodejs " ]]; then
+    # npm 随 Node.js 一起安装，只有当 Node.js 存在但 npm 不存在时才单独标记
+    if command -v node &> /dev/null; then
         MISSING_DEPS+=("npm")
     fi
+    # 如果 Node.js 也缺失，安装 Node.js 将自动安装 npm
 fi
 
 # 检查 Java
