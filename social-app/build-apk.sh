@@ -57,7 +57,8 @@ done
 if [ "$USE_DOCKER" = true ]; then
     echo "🐳 使用 Docker 模式构建..."
     if [ -f "build-apk-docker.sh" ]; then
-        exec ./build-apk-docker.sh "$MODE"
+        ./build-apk-docker.sh "$MODE"
+        exit $?
     else
         echo "❌ 错误: 找不到 build-apk-docker.sh 脚本"
         echo "   请确保在正确的目录下运行此脚本"

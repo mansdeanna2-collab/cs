@@ -73,7 +73,9 @@ RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-${CM
     && mv cmdline-tools latest
 
 # 接受 Android SDK 许可协议
-RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses > /dev/null 2>&1 || true
+# 注意: 某些许可可能返回非零退出码，这是正常的
+RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 | tee /tmp/license-output.log || true \
+    && echo "SDK 许可协议处理完成 (详见 /tmp/license-output.log)"
 
 # 安装 Android SDK 组件
 RUN ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --update \
@@ -88,8 +90,9 @@ RUN ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --update \
 WORKDIR /app
 
 # 复制 package 文件并安装依赖
+# 注意: 使用 npm install 以允许添加 Capacitor 依赖
 COPY package*.json ./
-RUN npm ci --silent \
+RUN npm install --silent \
     && npm install @capacitor/core @capacitor/cli @capacitor/android --save
 
 # 复制源代码
@@ -160,8 +163,8 @@ echo ""
 echo "📦 构建 APK..."
 cd android
 
-# 清理之前的构建
-./gradlew clean 2>/dev/null
+# 清理之前的构建 (忽略错误，因为可能是首次构建)
+./gradlew clean 2>&1 || true
 
 if [ "$MODE" = "release" ]; then
     echo "   模式: Release (签名版本)"

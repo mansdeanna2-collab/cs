@@ -61,7 +61,7 @@ echo ""
 # 检查或构建 Docker 镜像
 # =============================================================================
 
-IMAGE_EXISTS=$(docker images -q $IMAGE_NAME 2> /dev/null)
+IMAGE_EXISTS=$(docker images -q "$IMAGE_NAME" 2> /dev/null)
 
 if [ -z "$IMAGE_EXISTS" ] || [ "$REBUILD" = true ]; then
     echo "🔨 构建 Docker 镜像..."
