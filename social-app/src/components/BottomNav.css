@@ -5,7 +5,7 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: var(--container-max-width);
-  background: #FFFFFF;
+  background: var(--header-bg);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
