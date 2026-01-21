@@ -337,27 +337,43 @@ cd android
 如果遇到类似以下错误：
 ```
 Failed to create Jar file /root/.gradle/caches/jars-9/.../bcprov-jdk18on-1.79.jar
+java.util.concurrent.ExecutionException: org.gradle.api.GradleException: Failed to create Jar file
 ```
 
-这是 Gradle 缓存损坏问题，解决方法：
+这是 Gradle 缓存损坏问题。**build-apk.sh 脚本会自动检测并尝试修复此问题**，但如果需要手动解决：
 
 ```bash
-# 方法一：清理损坏的缓存目录
+# 方法一：清理损坏的缓存目录 + 使用 --no-daemon 模式
 rm -rf ~/.gradle/caches/jars-*
 rm -rf ~/.gradle/caches/transforms-*
+rm -rf ~/.gradle/caches/modules-*
 
-# 清理项目缓存并重新构建
+# 清理项目缓存并使用 --no-daemon 模式重新构建
 cd android
-./gradlew clean
-./gradlew assembleDebug
+rm -rf app/build build .gradle
+./gradlew --no-daemon assembleDebug
 ```
 
 ```bash
-# 方法二：完全清理 Gradle 缓存（谨慎使用，会重新下载所有依赖）
-rm -rf ~/.gradle/caches
+# 方法二：完全清理 Gradle 缓存和守护进程（谨慎使用，会重新下载所有依赖）
 cd android
-./gradlew assembleDebug
+./gradlew --stop  # 停止所有 Gradle 守护进程
+rm -rf ~/.gradle/caches
+rm -rf app/build build .gradle
+./gradlew --no-daemon assembleDebug
 ```
+
+```bash
+# 方法三：如果以上方法都不行，尝试删除整个 Gradle 目录
+rm -rf ~/.gradle
+cd android
+./gradlew --no-daemon assembleDebug
+```
+
+**常见原因：**
+- 磁盘空间不足导致 JAR 文件写入失败
+- 多个 Gradle 守护进程同时写入缓存
+- 之前构建被中断导致缓存文件损坏
 
 ### Q: SDK 版本不兼容？
 

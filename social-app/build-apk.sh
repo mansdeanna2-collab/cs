@@ -145,7 +145,9 @@ install_java() {
 }
 
 # 清理 Gradle 缓存 (修复损坏的 jar 文件问题)
+# 参数: $1 = "full" 进行完全清理, 否则进行部分清理
 clean_gradle_cache() {
+    local clean_level="${1:-partial}"
     echo "🧹 清理 Gradle 缓存..."
     
     # 获取 Gradle 用户目录
@@ -153,16 +155,43 @@ clean_gradle_cache() {
     
     # 检查缓存目录是否存在
     if [ -d "$gradle_home/caches" ]; then
-        # 删除可能损坏的 jars 缓存
-        if [ -d "$gradle_home/caches/jars-9" ]; then
-            echo "   删除 jars-9 缓存..."
-            rm -rf "$gradle_home/caches/jars-9"
-        fi
+        # 删除所有可能损坏的 jars 缓存 (jars-*, 不仅仅是 jars-9)
+        for dir in "$gradle_home/caches"/jars-*; do
+            if [ -d "$dir" ]; then
+                echo "   删除 $(basename "$dir") 缓存..."
+                rm -rf "$dir"
+            fi
+        done
         
         # 删除可能损坏的 transforms 缓存
-        if [ -d "$gradle_home/caches/transforms-3" ]; then
-            echo "   删除 transforms-3 缓存..."
-            rm -rf "$gradle_home/caches/transforms-3"
+        for dir in "$gradle_home/caches"/transforms-*; do
+            if [ -d "$dir" ]; then
+                echo "   删除 $(basename "$dir") 缓存..."
+                rm -rf "$dir"
+            fi
+        done
+        
+        # 如果是完全清理，删除更多缓存目录
+        if [ "$clean_level" = "full" ]; then
+            echo "   执行完全清理..."
+            # 删除 modules 缓存
+            for dir in "$gradle_home/caches"/modules-*; do
+                if [ -d "$dir" ]; then
+                    echo "   删除 $(basename "$dir") 缓存..."
+                    rm -rf "$dir"
+                fi
+            done
+            # 删除 build-cache
+            if [ -d "$gradle_home/caches/build-cache-1" ]; then
+                echo "   删除 build-cache-1 缓存..."
+                rm -rf "$gradle_home/caches/build-cache-1"
+            fi
+            # 停止所有 Gradle 守护进程
+            echo "   停止 Gradle 守护进程..."
+            # 使用 gradle --stop 更安全
+            if [ -f "android/gradlew" ]; then
+                (cd android && ./gradlew --stop 2>/dev/null || true)
+            fi
         fi
         
         echo "✅ Gradle 缓存清理完成"
@@ -411,15 +440,31 @@ echo "📦 构建 APK..."
 cd android
 
 # 构建函数
+# 参数: $1 = 是否使用 --no-daemon 标志 (true/false)
 run_gradle_build() {
-    if [ "$MODE" = "release" ]; then
-        echo "   模式: Release (签名版本)"
-        ./gradlew assembleRelease 2>&1
-        return $?
+    local use_no_daemon="${1:-false}"
+    
+    if [ "$use_no_daemon" = "true" ]; then
+        echo "   使用 --no-daemon 模式避免缓存锁定问题"
+        if [ "$MODE" = "release" ]; then
+            echo "   模式: Release (签名版本)"
+            ./gradlew --no-daemon assembleRelease 2>&1
+            return $?
+        else
+            echo "   模式: Debug (调试版本)"
+            ./gradlew --no-daemon assembleDebug 2>&1
+            return $?
+        fi
     else
-        echo "   模式: Debug (调试版本)"
-        ./gradlew assembleDebug 2>&1
-        return $?
+        if [ "$MODE" = "release" ]; then
+            echo "   模式: Release (签名版本)"
+            ./gradlew assembleRelease 2>&1
+            return $?
+        else
+            echo "   模式: Debug (调试版本)"
+            ./gradlew assembleDebug 2>&1
+            return $?
+        fi
     fi
 }
 
@@ -457,21 +502,42 @@ if [ $BUILD_RESULT -ne 0 ]; then
         echo "════════════════════════════════════════════════════════════"
         echo ""
         
+        # 第一次重试: 部分清理 + no-daemon 模式
         cd ..
-        clean_gradle_cache
+        clean_gradle_cache "partial"
         cd android
         
-        # 同时清理项目级别的构建缓存
-        echo "🧹 清理项目构建缓存..."
-        if ! ./gradlew clean; then
-            echo "⚠️  项目缓存清理失败，继续尝试构建..."
-        fi
-        
         echo ""
-        echo "🔄 重新构建 APK..."
-        BUILD_OUTPUT=$(run_gradle_build)
+        echo "🔄 重新构建 APK (使用 --no-daemon 模式)..."
+        BUILD_OUTPUT=$(run_gradle_build "true")
         BUILD_RESULT=$?
         echo "$BUILD_OUTPUT"
+        
+        # 如果仍然失败并且是缓存问题，尝试完全清理
+        if [ $BUILD_RESULT -ne 0 ] && is_gradle_cache_error "$BUILD_OUTPUT"; then
+            echo ""
+            echo "════════════════════════════════════════════════════════════"
+            echo "⚠️  部分清理后仍有缓存问题"
+            echo "   正在执行完全清理并再次重试..."
+            echo "════════════════════════════════════════════════════════════"
+            echo ""
+            
+            cd ..
+            clean_gradle_cache "full"
+            cd android
+            
+            # 清理项目级别的构建目录
+            echo "🧹 清理项目构建目录..."
+            rm -rf app/build 2>/dev/null || true
+            rm -rf build 2>/dev/null || true
+            rm -rf .gradle 2>/dev/null || true
+            
+            echo ""
+            echo "🔄 最后一次尝试构建..."
+            BUILD_OUTPUT=$(run_gradle_build "true")
+            BUILD_RESULT=$?
+            echo "$BUILD_OUTPUT"
+        fi
     fi
 fi
 cd ..
