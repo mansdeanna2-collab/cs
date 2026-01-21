@@ -91,6 +91,9 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 body {
@@ -103,9 +106,6 @@ body {
   overflow-x: hidden;
   letter-spacing: -0.01em;
   transition: background-color var(--transition-slow), color var(--transition-slow);
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
 }
 
 /* Scrollbar Styles */
@@ -146,17 +146,6 @@ button:active, .touchable:active {
 }
 
 /* Prevent text selection on interactive elements */
-button, a, .touchable, .nav-item, .menu-item, .card {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
-
-img, svg {
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
-}
 
 /* Theme transition overlay */
 .app-container::before {
