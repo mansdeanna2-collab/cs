@@ -5,6 +5,20 @@ npm-debug.log
 # 构建产物
 build
 dist
+output
+
+# APK 和签名文件
+*.apk
+*.aab
+*.jks
+*.keystore
+
+# Android 构建产物 (保留 android 目录结构，但排除构建产物)
+android/.gradle
+android/app/build
+android/build
+android/local.properties
+android/captures
 
 # 开发工具
 .git
@@ -25,12 +39,10 @@ coverage
 *.test.tsx
 *.test.ts
 
-# 文档
+# 文档 (保留 APK 构建所需的配置文件)
 README.md
 DOCKER_GUIDE.md
-*.md
 
-# Docker
-Dockerfile
+# Docker (保留 APK 构建相关的 Dockerfile)
 docker-compose.yml
 .dockerignore

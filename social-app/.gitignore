@@ -11,6 +11,27 @@
 # production
 /build
 
+# APK 输出目录
+/output
+*.apk
+*.aab
+
+# Android 构建产物
+/android/.gradle
+/android/app/build
+/android/build
+/android/local.properties
+/android/captures
+
+# Capacitor
+/android
+/ios
+
+# 签名密钥 (重要: 不要提交到版本控制)
+*.jks
+*.keystore
+signing.properties
+
 # misc
 .DS_Store
 .env.local
