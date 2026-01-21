@@ -188,11 +188,9 @@ clean_gradle_cache() {
             fi
             # 停止所有 Gradle 守护进程
             echo "   停止 Gradle 守护进程..."
-            if command -v pkill &> /dev/null 2>&1; then
-                # 使用 gradle --stop 更安全
-                if [ -f "android/gradlew" ]; then
-                    (cd android && ./gradlew --stop 2>/dev/null || true)
-                fi
+            # 使用 gradle --stop 更安全
+            if [ -f "android/gradlew" ]; then
+                (cd android && ./gradlew --stop 2>/dev/null || true)
             fi
         fi
         
@@ -445,21 +443,28 @@ cd android
 # 参数: $1 = 是否使用 --no-daemon 标志 (true/false)
 run_gradle_build() {
     local use_no_daemon="${1:-false}"
-    local gradle_opts=""
     
     if [ "$use_no_daemon" = "true" ]; then
-        gradle_opts="--no-daemon"
         echo "   使用 --no-daemon 模式避免缓存锁定问题"
-    fi
-    
-    if [ "$MODE" = "release" ]; then
-        echo "   模式: Release (签名版本)"
-        ./gradlew $gradle_opts assembleRelease 2>&1
-        return $?
+        if [ "$MODE" = "release" ]; then
+            echo "   模式: Release (签名版本)"
+            ./gradlew --no-daemon assembleRelease 2>&1
+            return $?
+        else
+            echo "   模式: Debug (调试版本)"
+            ./gradlew --no-daemon assembleDebug 2>&1
+            return $?
+        fi
     else
-        echo "   模式: Debug (调试版本)"
-        ./gradlew $gradle_opts assembleDebug 2>&1
-        return $?
+        if [ "$MODE" = "release" ]; then
+            echo "   模式: Release (签名版本)"
+            ./gradlew assembleRelease 2>&1
+            return $?
+        else
+            echo "   模式: Debug (调试版本)"
+            ./gradlew assembleDebug 2>&1
+            return $?
+        fi
     fi
 }
 
