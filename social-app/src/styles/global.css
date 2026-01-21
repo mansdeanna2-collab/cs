@@ -91,9 +91,6 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  -webkit-user-select: none;
-  user-select: none;
-  -webkit-touch-callout: none;
 }
 
 body {
@@ -132,6 +129,9 @@ body {
   overflow: hidden;
   transition: background-color var(--transition-slow);
   padding-top: 12px;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Global Touch Feedback */
@@ -144,8 +144,6 @@ button:active, .touchable:active {
   transform: scale(0.96);
   opacity: 0.9;
 }
-
-/* Prevent text selection on interactive elements */
 
 /* Theme transition overlay */
 .app-container::before {
