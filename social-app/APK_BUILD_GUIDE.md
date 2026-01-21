@@ -247,11 +247,32 @@ cd android
 
 ### build-apk.sh
 
+本脚本支持自动安装依赖和清理 Gradle 缓存问题。
+
+**用法:**
+```bash
+# 基本用法
+./build-apk.sh                      # 构建 Debug APK
+./build-apk.sh release              # 构建 Release APK
+
+# 自动安装模式 (自动安装所有缺失的依赖)
+./build-apk.sh --auto-install       # 自动安装依赖并构建 Debug APK
+./build-apk.sh release -y           # 自动安装依赖并构建 Release APK
+```
+
+**功能特性:**
+- ✅ 自动检测并安装缺失的依赖 (Node.js, Java JDK, Android SDK)
+- ✅ 自动检测 Gradle 缓存损坏并尝试修复 (最多 3 级清理)
+- ✅ 自动设置 ANDROID_HOME 环境变量
+- ✅ 支持 Debug 和 Release 两种构建模式
+
+**示例脚本代码:**
+
 ```bash
 #!/bin/bash
 # =============================================================================
 # APK 打包脚本
-# 用法: ./build-apk.sh [debug|release]
+# 用法: ./build-apk.sh [debug|release] [--auto-install]
 # =============================================================================
 
 MODE=${1:-debug}
