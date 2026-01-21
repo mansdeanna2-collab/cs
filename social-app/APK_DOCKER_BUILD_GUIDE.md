@@ -168,6 +168,17 @@ ARG BUILD_TOOLS_VERSION=34.0.0
 ARG PLATFORM_VERSION=android-34
 ```
 
+### 自定义 Kotlin 版本
+
+构建脚本会自动修复 Kotlin stdlib 依赖冲突。默认使用 Kotlin 1.8.22，如需自定义版本，可以在运行容器时设置环境变量：
+
+```bash
+docker run --rm \
+    -v $(pwd)/output:/app/output \
+    -e KOTLIN_VERSION=1.9.0 \
+    social-app-apk-builder debug
+```
+
 ### 增加内存限制
 
 如果构建失败，可能需要增加 Docker 内存限制：
@@ -238,7 +249,22 @@ build-apk:
 
 ### 常见问题
 
-#### 1. 内存不足
+#### 1. Kotlin stdlib 重复类冲突
+
+```
+Duplicate class kotlin.collections.jdk8.CollectionsJDK8Kt found in modules...
+```
+
+这是由于 Kotlin 1.8+ 将 `kotlin-stdlib-jdk7` 和 `kotlin-stdlib-jdk8` 合并到了主 `kotlin-stdlib` 中，但某些依赖可能仍然引入旧版本的这些模块，导致类重复冲突。
+
+**解决方案**：Docker 构建脚本已自动应用此修复。如果遇到此问题，请确保使用最新版本的 `Dockerfile.apk-builder`，或者清理缓存后重新构建：
+
+```bash
+docker volume rm social-app-gradle-cache
+./build-apk-docker.sh --rebuild
+```
+
+#### 2. 内存不足
 
 ```
 Error: ENOMEM
@@ -246,7 +272,7 @@ Error: ENOMEM
 
 解决方案：增加 Docker 内存限制到 4GB 以上。
 
-#### 2. 磁盘空间不足
+#### 3. 磁盘空间不足
 
 ```
 No space left on device
@@ -258,11 +284,11 @@ No space left on device
 docker system prune -a
 ```
 
-#### 3. 构建超时
+#### 4. 构建超时
 
 解决方案：首次构建需要下载较多依赖，请耐心等待。后续构建会使用缓存加速。
 
-#### 4. Gradle 缓存问题
+#### 5. Gradle 缓存问题
 
 如果遇到 Gradle 缓存损坏，清理缓存后重试：
 
