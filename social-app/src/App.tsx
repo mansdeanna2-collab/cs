@@ -6,7 +6,7 @@ import PartyPage from './pages/PartyPage';
 import MessagesPage from './pages/MessagesPage';
 import ProfilePage from './pages/ProfilePage';
 
-const EDITABLE_SELECTOR = '.editable-field';
+const EDITABLE_SELECTOR = 'input, textarea, [contenteditable="true"]';
 
 function App() {
   const [activeTab, setActiveTab] = useState('home');
