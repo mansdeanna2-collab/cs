@@ -146,7 +146,7 @@ button:active, .touchable:active {
 }
 
 .app-container .editable-field,
-.app-container [contenteditable="true"] {
+.app-container [contenteditable="true" i] {
   -webkit-user-select: text;
   user-select: text;
 }

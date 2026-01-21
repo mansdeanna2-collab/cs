@@ -13,7 +13,7 @@ function App() {
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     const target = event.target as HTMLElement;
-    if (target.closest(EDITABLE_SELECTOR) || target.isContentEditable === true) {
+    if (target.closest(EDITABLE_SELECTOR) || target.isContentEditable) {
       return;
     }
     event.preventDefault();
