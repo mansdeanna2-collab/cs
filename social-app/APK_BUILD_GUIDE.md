@@ -332,6 +332,33 @@ cd android
 ./gradlew assembleDebug
 ```
 
+### Q: Gradle 缓存损坏 (Failed to create Jar file)？
+
+如果遇到类似以下错误：
+```
+Failed to create Jar file /root/.gradle/caches/jars-9/.../bcprov-jdk18on-1.79.jar
+```
+
+这是 Gradle 缓存损坏问题，解决方法：
+
+```bash
+# 方法一：清理损坏的缓存目录
+rm -rf ~/.gradle/caches/jars-*
+rm -rf ~/.gradle/caches/transforms-*
+
+# 清理项目缓存并重新构建
+cd android
+./gradlew clean
+./gradlew assembleDebug
+```
+
+```bash
+# 方法二：完全清理 Gradle 缓存（谨慎使用，会重新下载所有依赖）
+rm -rf ~/.gradle/caches
+cd android
+./gradlew assembleDebug
+```
+
 ### Q: SDK 版本不兼容？
 
 编辑 `android/app/build.gradle`:

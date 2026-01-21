@@ -144,6 +144,35 @@ install_java() {
     fi
 }
 
+# 清理 Gradle 缓存 (修复损坏的 jar 文件问题)
+clean_gradle_cache() {
+    echo "🧹 清理 Gradle 缓存..."
+    
+    # 获取 Gradle 用户目录
+    local gradle_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+    
+    # 检查缓存目录是否存在
+    if [ -d "$gradle_home/caches" ]; then
+        # 删除可能损坏的 jars 缓存
+        if [ -d "$gradle_home/caches/jars-9" ]; then
+            echo "   删除 jars-9 缓存..."
+            rm -rf "$gradle_home/caches/jars-9"
+        fi
+        
+        # 删除可能损坏的 transforms 缓存
+        if [ -d "$gradle_home/caches/transforms-3" ]; then
+            echo "   删除 transforms-3 缓存..."
+            rm -rf "$gradle_home/caches/transforms-3"
+        fi
+        
+        echo "✅ Gradle 缓存清理完成"
+        return 0
+    else
+        echo "ℹ️  未发现 Gradle 缓存目录"
+        return 0
+    fi
+}
+
 # 显示 Android SDK 安装指南
 show_android_sdk_guide() {
     echo ""
@@ -381,17 +410,69 @@ echo ""
 echo "📦 构建 APK..."
 cd android
 
+# 构建函数
+run_gradle_build() {
+    if [ "$MODE" = "release" ]; then
+        echo "   模式: Release (签名版本)"
+        ./gradlew assembleRelease 2>&1
+        return $?
+    else
+        echo "   模式: Debug (调试版本)"
+        ./gradlew assembleDebug 2>&1
+        return $?
+    fi
+}
+
+# 检测 Gradle 缓存损坏错误
+is_gradle_cache_error() {
+    local output="$1"
+    # 检测多种缓存损坏相关的错误模式
+    if echo "$output" | grep -qE "(Failed to create Jar file|Could not create entry|Couldn't create parent directory|java\.util\.zip\.ZipException|Failed to read entry|Corrupt|Unable to delete stale cache)"; then
+        return 0
+    fi
+    return 1
+}
+
+# 设置 APK 路径
 if [ "$MODE" = "release" ]; then
-    echo "   模式: Release (签名版本)"
-    ./gradlew assembleRelease
-    BUILD_RESULT=$?
     APK_PATH="app/build/outputs/apk/release/app-release.apk"
     APK_UNSIGNED_PATH="app/build/outputs/apk/release/app-release-unsigned.apk"
 else
-    echo "   模式: Debug (调试版本)"
-    ./gradlew assembleDebug
-    BUILD_RESULT=$?
     APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
+fi
+
+# 第一次尝试构建
+BUILD_OUTPUT=$(run_gradle_build)
+BUILD_RESULT=$?
+echo "$BUILD_OUTPUT"
+
+# 如果构建失败，检查是否是 Gradle 缓存损坏问题
+if [ $BUILD_RESULT -ne 0 ]; then
+    # 检查是否是缓存损坏错误 (bcprov-jdk18on, 其他 jar 文件创建失败等)
+    if is_gradle_cache_error "$BUILD_OUTPUT"; then
+        echo ""
+        echo "════════════════════════════════════════════════════════════"
+        echo "⚠️  检测到 Gradle 缓存损坏问题"
+        echo "   正在自动清理缓存并重试..."
+        echo "════════════════════════════════════════════════════════════"
+        echo ""
+        
+        cd ..
+        clean_gradle_cache
+        cd android
+        
+        # 同时清理项目级别的构建缓存
+        echo "🧹 清理项目构建缓存..."
+        if ! ./gradlew clean; then
+            echo "⚠️  项目缓存清理失败，继续尝试构建..."
+        fi
+        
+        echo ""
+        echo "🔄 重新构建 APK..."
+        BUILD_OUTPUT=$(run_gradle_build)
+        BUILD_RESULT=$?
+        echo "$BUILD_OUTPUT"
+    fi
 fi
 cd ..
 
@@ -427,7 +508,11 @@ else
     echo "📋 故障排查:"
     echo "   1. 确保 Android Studio 已安装"
     echo "   2. 确保 ANDROID_HOME 环境变量已设置"
-    echo "   3. 尝试在 Android Studio 中打开项目:"
+    echo "   3. 清理 Gradle 缓存后重试:"
+    echo "      rm -rf ~/.gradle/caches/jars-*"
+    echo "      rm -rf ~/.gradle/caches/transforms-*"
+    echo "      cd android && ./gradlew clean"
+    echo "   4. 尝试在 Android Studio 中打开项目:"
     echo "      npx cap open android"
     echo "════════════════════════════════════════════════════════════"
     exit 1
