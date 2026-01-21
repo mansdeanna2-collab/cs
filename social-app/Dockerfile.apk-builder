@@ -1,0 +1,221 @@
+# =============================================================================
+# 趣玩社区 App - Docker APK 构建镜像
+# APK Builder - Android APK 打包环境
+# =============================================================================
+# 使用方法:
+#   docker build -f Dockerfile.apk-builder -t social-app-apk-builder .
+#   docker run -v $(pwd)/output:/app/output social-app-apk-builder [debug|release]
+# =============================================================================
+
+FROM ubuntu:22.04
+
+# 设置 Shell 选项以便更好地处理管道错误
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+
+# 避免交互式提示
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 设置 Android SDK 环境变量
+ENV ANDROID_HOME=/opt/android-sdk
+ENV ANDROID_SDK_ROOT=/opt/android-sdk
+ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/34.0.0"
+
+# 设置 Java 环境变量
+ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+
+# 设置时区
+ENV TZ=Asia/Shanghai
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
+# =============================================================================
+# 安装基础依赖
+# =============================================================================
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    # 基础工具
+    curl \
+    wget \
+    unzip \
+    git \
+    ca-certificates \
+    gnupg \
+    # Java JDK 17
+    openjdk-17-jdk \
+    # 构建工具
+    build-essential \
+    # 32位库支持 (Android SDK需要)
+    lib32stdc++6 \
+    lib32z1 \
+    # 清理缓存
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+
+# =============================================================================
+# 安装 Node.js 18.x LTS
+# =============================================================================
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+    && apt-get install -y --no-install-recommends nodejs \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
+    && npm install -g npm@latest
+
+# =============================================================================
+# 安装 Android SDK 命令行工具
+# =============================================================================
+# 使用最新稳定版本的命令行工具
+ARG CMDLINE_TOOLS_VERSION=11076708
+ARG BUILD_TOOLS_VERSION=34.0.0
+ARG PLATFORM_VERSION=android-34
+
+WORKDIR ${ANDROID_HOME}/cmdline-tools
+RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip \
+    && unzip -q cmdline-tools.zip \
+    && rm cmdline-tools.zip \
+    && mv cmdline-tools latest
+
+# 接受 Android SDK 许可协议
+# 注意: 某些许可可能返回非零退出码，这是正常的
+RUN yes | ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --licenses 2>&1 | tee /tmp/license-output.log || true \
+    && echo "SDK 许可协议处理完成 (详见 /tmp/license-output.log)"
+
+# 安装 Android SDK 组件
+RUN ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --update \
+    && ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager \
+        "platform-tools" \
+        "build-tools;${BUILD_TOOLS_VERSION}" \
+        "platforms;${PLATFORM_VERSION}"
+
+# =============================================================================
+# 设置工作目录
+# =============================================================================
+WORKDIR /app
+
+# 复制 package 文件并安装依赖
+# 注意: 使用 npm install 以允许添加 Capacitor 依赖
+COPY package*.json ./
+RUN npm install --silent \
+    && npm install @capacitor/core @capacitor/cli @capacitor/android --save
+
+# 复制源代码
+COPY . .
+
+# 创建输出目录
+RUN mkdir -p /app/output
+
+# =============================================================================
+# 构建入口脚本
+# =============================================================================
+COPY <<'EOF' /app/docker-build-apk.sh
+#!/bin/bash
+# =============================================================================
+# Docker 容器内 APK 构建脚本
+# =============================================================================
+
+MODE=${1:-debug}
+
+echo "╔════════════════════════════════════════════════════════════╗"
+echo "║      🐳 Docker APK 构建环境                                  ║"
+echo "╚════════════════════════════════════════════════════════════╝"
+echo ""
+echo "📦 构建模式: $MODE"
+echo "📍 Android SDK: $ANDROID_HOME"
+echo "☕ Java: $(java --version 2>&1 | head -1)"
+echo "📗 Node.js: $(node --version)"
+echo ""
+
+# 检查是否需要初始化 Capacitor
+if [ ! -f "capacitor.config.ts" ] && [ ! -f "capacitor.config.json" ]; then
+    echo "📝 初始化 Capacitor..."
+    npx cap init "趣玩社区" "com.quwan.social" --web-dir=build
+fi
+
+# 检查是否添加了 Android 平台
+if [ ! -d "android" ]; then
+    echo "📲 添加 Android 平台..."
+    npx cap add android
+    if [ $? -ne 0 ]; then
+        echo "❌ 添加 Android 平台失败！"
+        exit 1
+    fi
+fi
+
+# 构建 Web 应用
+echo ""
+echo "🔨 构建 Web 应用..."
+npm run build
+
+if [ $? -ne 0 ]; then
+    echo "❌ Web 构建失败！"
+    exit 1
+fi
+
+# 同步 Capacitor
+echo ""
+echo "📲 同步到 Android..."
+npx cap sync android
+
+if [ $? -ne 0 ]; then
+    echo "❌ Capacitor 同步失败！"
+    exit 1
+fi
+
+# 构建 APK
+echo ""
+echo "📦 构建 APK..."
+cd android
+
+# 清理之前的构建 (忽略错误，因为可能是首次构建)
+./gradlew clean 2>&1 || true
+
+if [ "$MODE" = "release" ]; then
+    echo "   模式: Release (签名版本)"
+    ./gradlew --no-daemon assembleRelease
+    APK_PATH="app/build/outputs/apk/release/app-release.apk"
+    APK_UNSIGNED_PATH="app/build/outputs/apk/release/app-release-unsigned.apk"
+else
+    echo "   模式: Debug (调试版本)"
+    ./gradlew --no-daemon assembleDebug
+    APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
+fi
+
+BUILD_RESULT=$?
+cd ..
+
+if [ $BUILD_RESULT -eq 0 ]; then
+    echo ""
+    echo "════════════════════════════════════════════════════════════"
+    echo "✅ APK 打包成功！"
+    echo ""
+    
+    # 复制 APK 到输出目录
+    FULL_APK_PATH="android/$APK_PATH"
+    if [ -f "$FULL_APK_PATH" ]; then
+        cp "$FULL_APK_PATH" /app/output/
+        SIZE=$(du -h "$FULL_APK_PATH" | cut -f1)
+        echo "📍 APK 已复制到: /app/output/$(basename $APK_PATH)"
+        echo "📊 APK 大小: $SIZE"
+    elif [ -f "android/$APK_UNSIGNED_PATH" ]; then
+        cp "android/$APK_UNSIGNED_PATH" /app/output/
+        SIZE=$(du -h "android/$APK_UNSIGNED_PATH" | cut -f1)
+        echo "📍 APK 已复制到: /app/output/$(basename $APK_UNSIGNED_PATH)"
+        echo "📊 APK 大小: $SIZE"
+        echo ""
+        echo "⚠️  注意: 这是未签名的 APK，需要签名后才能发布"
+    fi
+    
+    echo "════════════════════════════════════════════════════════════"
+else
+    echo ""
+    echo "════════════════════════════════════════════════════════════"
+    echo "❌ APK 打包失败！"
+    echo "════════════════════════════════════════════════════════════"
+    exit 1
+fi
+EOF
+
+RUN chmod +x /app/docker-build-apk.sh
+
+# =============================================================================
+# 默认入口点
+# =============================================================================
+ENTRYPOINT ["/app/docker-build-apk.sh"]
+CMD ["debug"]

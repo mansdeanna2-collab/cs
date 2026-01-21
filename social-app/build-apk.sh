@@ -1,13 +1,25 @@
 #!/bin/bash
 # =============================================================================
 # APK 打包脚本
-# 用法: ./build-apk.sh [debug|release] [--auto-install]
+# 用法: ./build-apk.sh [debug|release] [--auto-install] [--docker]
 # 示例: ./build-apk.sh release
 #       ./build-apk.sh release --auto-install
+#       ./build-apk.sh release --docker
 # =============================================================================
+# 版本: 2.0.0
+# 更新日志:
+#   - 添加 Docker 构建支持 (--docker)
+#   - 改进错误处理和日志输出
+#   - 优化 Gradle 缓存清理逻辑
+#   - 添加版本检测功能
+# =============================================================================
+
+set -e  # 遇到错误立即退出
 
 MODE=${1:-debug}
 AUTO_INSTALL=false
+USE_DOCKER=false
+SCRIPT_VERSION="2.0.0"
 
 # 解析参数
 for arg in "$@"; do
@@ -15,8 +27,44 @@ for arg in "$@"; do
         --auto-install|-y)
             AUTO_INSTALL=true
             ;;
+        --docker|-d)
+            USE_DOCKER=true
+            ;;
+        --version|-v)
+            echo "build-apk.sh 版本: $SCRIPT_VERSION"
+            exit 0
+            ;;
+        --help|-h)
+            echo "用法: ./build-apk.sh [debug|release] [选项]"
+            echo ""
+            echo "选项:"
+            echo "  --auto-install, -y    自动安装缺失的依赖"
+            echo "  --docker, -d          使用 Docker 容器构建 (推荐)"
+            echo "  --version, -v         显示脚本版本"
+            echo "  --help, -h            显示帮助信息"
+            echo ""
+            echo "示例:"
+            echo "  ./build-apk.sh                    # 构建 Debug APK"
+            echo "  ./build-apk.sh release            # 构建 Release APK"
+            echo "  ./build-apk.sh release --docker   # 使用 Docker 构建 Release APK"
+            echo "  ./build-apk.sh release -y         # 自动安装依赖并构建 Release APK"
+            exit 0
+            ;;
     esac
 done
+
+# 如果使用 Docker 模式，调用 Docker 脚本
+if [ "$USE_DOCKER" = true ]; then
+    echo "🐳 使用 Docker 模式构建..."
+    if [ -f "build-apk-docker.sh" ]; then
+        ./build-apk-docker.sh "$MODE"
+        exit $?
+    else
+        echo "❌ 错误: 找不到 build-apk-docker.sh 脚本"
+        echo "   请确保在正确的目录下运行此脚本"
+        exit 1
+    fi
+fi
 
 echo "╔════════════════════════════════════════════════════════════╗"
 echo "║          📱 趣玩社区 APK 打包脚本                            ║"
