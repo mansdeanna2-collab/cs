@@ -384,15 +384,15 @@ cd android
 if [ "$MODE" = "release" ]; then
     echo "   模式: Release (签名版本)"
     ./gradlew assembleRelease
+    BUILD_RESULT=$?
     APK_PATH="app/build/outputs/apk/release/app-release.apk"
     APK_UNSIGNED_PATH="app/build/outputs/apk/release/app-release-unsigned.apk"
 else
     echo "   模式: Debug (调试版本)"
     ./gradlew assembleDebug
+    BUILD_RESULT=$?
     APK_PATH="app/build/outputs/apk/debug/app-debug.apk"
 fi
-
-BUILD_RESULT=$?
 cd ..
 
 if [ $BUILD_RESULT -eq 0 ]; then
