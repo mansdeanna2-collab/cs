@@ -4,6 +4,9 @@ import './StatusBar.css';
 const StatusBar: React.FC = () => {
   const [time, setTime] = useState<string>('');
   const [batteryLevel] = useState<number>(85);
+  
+  // Width multiplier for battery fill indicator (max width ~17px for 100%)
+  const BATTERY_WIDTH_MULTIPLIER = 0.17;
 
   useEffect(() => {
     const updateTime = () => {
@@ -47,7 +50,7 @@ const StatusBar: React.FC = () => {
           <svg width="25" height="12" viewBox="0 0 25 12" fill="none">
             <rect x="0.5" y="0.5" width="21" height="11" rx="2.5" stroke="currentColor" strokeWidth="1"/>
             <rect x="23" y="3.5" width="2" height="5" rx="0.5" fill="currentColor"/>
-            <rect x="2" y="2" width={`${batteryLevel * 0.17}`} height="8" rx="1" fill="currentColor"/>
+            <rect x="2" y="2" width={`${batteryLevel * BATTERY_WIDTH_MULTIPLIER}`} height="8" rx="1" fill="currentColor"/>
           </svg>
           <span className="battery-text">{batteryLevel}%</span>
         </span>
