@@ -7,7 +7,7 @@
 #   docker run -v $(pwd)/output:/app/output social-app-apk-builder [debug|release]
 # =============================================================================
 
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 
 # 设置 Shell 选项以便更好地处理管道错误
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
