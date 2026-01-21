@@ -81,6 +81,9 @@
   --transition-fast: 0.15s ease;
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Layout */
+  --app-container-top-padding: 12px;
   
   /* Layout - Responsive */
   --container-max-width: min(100vw, 430px);
@@ -128,6 +131,10 @@ body {
   background: var(--bg-primary);
   overflow: hidden;
   transition: background-color var(--transition-slow);
+  padding-top: var(--app-container-top-padding);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Global Touch Feedback */
@@ -141,10 +148,12 @@ button:active, .touchable:active {
   opacity: 0.9;
 }
 
-/* Prevent text selection on interactive elements */
-button, a, .touchable, .nav-item, .menu-item, .card {
-  -webkit-user-select: none;
-  user-select: none;
+.editable-field,
+input,
+textarea,
+[contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
 }
 
 /* Theme transition overlay */
