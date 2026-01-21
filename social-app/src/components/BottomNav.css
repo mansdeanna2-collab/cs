@@ -5,16 +5,17 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 430px;
-  background: linear-gradient(180deg, rgba(37, 40, 66, 0.95) 0%, rgba(26, 27, 46, 0.98) 100%);
+  background: var(--gradient-nav);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   display: flex;
   justify-content: space-around;
   align-items: center;
-  padding: 8px 16px 24px;
-  border-top: 1px solid rgba(108, 99, 255, 0.2);
+  padding: 12px 20px 28px;
+  border-top: 1px solid rgba(108, 99, 255, 0.08);
   z-index: 1000;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-normal);
 }
 
 .nav-item {
@@ -23,74 +24,106 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 6px;
   background: transparent;
   border: none;
-  padding: 8px 16px;
+  padding: 12px 20px;
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 16px;
-  min-width: 64px;
+  border-radius: 24px;
+  min-width: 72px;
 }
 
 .nav-item:hover {
   background: rgba(108, 99, 255, 0.1);
+  transform: translateY(-4px);
 }
 
 .nav-item.active {
-  background: rgba(108, 99, 255, 0.15);
+  background: linear-gradient(135deg, rgba(108, 99, 255, 0.15) 0%, rgba(255, 107, 157, 0.12) 100%);
+  box-shadow: 0 4px 16px rgba(108, 99, 255, 0.15);
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 36px;
+  height: 4px;
+  background: var(--gradient-primary);
+  border-radius: 0 0 6px 6px;
+  animation: fadeIn 0.3s ease;
 }
 
 .nav-icon {
   position: relative;
-  font-size: 24px;
+  font-size: 28px;
   line-height: 1;
-  transition: transform 0.3s ease;
+  transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 .nav-item.active .nav-icon {
-  transform: scale(1.15);
+  transform: scale(1.25);
+  filter: drop-shadow(0 3px 10px rgba(108, 99, 255, 0.5));
+}
+
+.nav-item:hover .nav-icon {
+  animation: swing 0.5s ease-in-out;
 }
 
 .nav-badge {
   position: absolute;
   top: -6px;
   right: -10px;
-  min-width: 18px;
-  height: 18px;
+  min-width: 22px;
+  height: 22px;
   background: linear-gradient(135deg, #FF6B9D 0%, #FF5252 100%);
   color: white;
-  font-size: 10px;
-  font-weight: 600;
-  border-radius: 9px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 11px;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 0 4px;
-  box-shadow: 0 2px 8px rgba(255, 82, 82, 0.4);
-  animation: pulse 2s infinite;
+  padding: 0 6px;
+  box-shadow: 0 4px 14px rgba(255, 82, 82, 0.5);
+  animation: pulse 2s infinite, bounce 1s infinite;
+  border: 2px solid var(--bg-primary);
 }
 
 .nav-label {
-  font-size: 11px;
-  color: #A8ABBE;
-  font-weight: 500;
-  transition: color 0.3s ease;
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+  transition: all 0.3s ease;
+  letter-spacing: 0.01em;
 }
 
 .nav-item.active .nav-label {
-  color: #6C63FF;
-  font-weight: 600;
+  color: var(--primary-color);
+  font-weight: 700;
+  background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .nav-indicator {
   position: absolute;
-  bottom: 2px;
-  width: 20px;
-  height: 3px;
-  background: linear-gradient(90deg, #6C63FF 0%, #FF6B9D 100%);
+  bottom: 4px;
+  width: 24px;
+  height: 4px;
+  background: var(--gradient-primary);
   border-radius: 2px;
-  animation: fadeIn 0.3s ease;
+  animation: fadeIn 0.3s ease, glow 2s ease-in-out infinite;
+  box-shadow: 0 0 12px rgba(108, 99, 255, 0.6);
+}
+
+@keyframes swing {
+  0%, 100% { transform: rotate(-8deg) scale(1.1); }
+  50% { transform: rotate(8deg) scale(1.1); }
 }
 
 @keyframes pulse {
@@ -100,5 +133,15 @@
 
 @keyframes fadeIn {
   from { opacity: 0; width: 0; }
-  to { opacity: 1; width: 20px; }
+  to { opacity: 1; width: 24px; }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 8px rgba(108, 99, 255, 0.4); }
+  50% { box-shadow: 0 0 16px rgba(108, 99, 255, 0.8), 0 0 24px rgba(255, 107, 157, 0.4); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-2px) scale(1.05); }
 }

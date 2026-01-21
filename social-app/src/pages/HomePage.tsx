@@ -125,25 +125,23 @@ const HomePage: React.FC = () => {
         </div>
       </header>
 
-      {/* Banner Section */}
-      <section className="banner-section">
-        <div className="banner-card">
-          <div className="banner-content">
-            <span className="banner-tag">🎉 限时活动</span>
-            <h2 className="banner-title">新年派对狂欢季</h2>
-            <p className="banner-desc">参与游戏赢取海量金币奖励</p>
-            <button className="banner-btn">立即参与</button>
+      {/* Server Broadcast Announcement */}
+      <section className="broadcast-section">
+        <div className="broadcast-bar">
+          <div className="broadcast-icon">
+            <span className="megaphone">📢</span>
           </div>
-          <div className="banner-decoration">
-            <span className="decoration-emoji">🎊</span>
-            <span className="decoration-emoji float-1">🎁</span>
-            <span className="decoration-emoji float-2">✨</span>
+          <div className="broadcast-content">
+            <div className="broadcast-marquee">
+              <span className="broadcast-text">
+                🎉 新年派对狂欢季火热进行中！参与游戏赢取海量金币奖励 · 
+                🏆 排行榜已更新，快来查看你的排名 · 
+                💎 VIP专属福利限时领取中 · 
+                🎮 新游戏"你画我猜"已上线
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="banner-dots">
-          <span className="dot active"></span>
-          <span className="dot"></span>
-          <span className="dot"></span>
+          <button className="broadcast-close">×</button>
         </div>
       </section>
 

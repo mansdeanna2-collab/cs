@@ -25,7 +25,7 @@ function App() {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container light-theme">
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
