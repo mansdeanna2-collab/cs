@@ -144,14 +144,130 @@ install_java() {
     fi
 }
 
+# 安装 Android SDK 命令行工具
+install_android_sdk() {
+    local os=$(detect_os)
+    echo "🔄 正在安装 Android SDK 命令行工具..."
+    
+    # 设置默认 SDK 路径
+    local sdk_root="$HOME/Android/Sdk"
+    local cmdline_tools_version="11076708"  # 最新稳定版本
+    local cmdline_tools_zip="commandlinetools-linux-${cmdline_tools_version}_latest.zip"
+    local download_url="https://dl.google.com/android/repository/${cmdline_tools_zip}"
+    
+    # macOS 使用不同的下载链接
+    if [ "$os" = "macos" ]; then
+        cmdline_tools_zip="commandlinetools-mac-${cmdline_tools_version}_latest.zip"
+        download_url="https://dl.google.com/android/repository/${cmdline_tools_zip}"
+        sdk_root="$HOME/Library/Android/sdk"
+    fi
+    
+    # 创建 SDK 目录
+    mkdir -p "$sdk_root/cmdline-tools"
+    
+    # 检查是否需要安装必要的工具
+    case $os in
+        ubuntu|debian)
+            # 安装必要的依赖
+            echo "   安装必要的依赖..."
+            sudo apt-get update 2>/dev/null
+            sudo apt-get install -y wget unzip 2>/dev/null
+            ;;
+        centos|rhel|fedora)
+            sudo yum install -y wget unzip 2>/dev/null || sudo dnf install -y wget unzip 2>/dev/null
+            ;;
+        macos)
+            # macOS 通常已有这些工具
+            ;;
+    esac
+    
+    # 下载命令行工具
+    echo "   下载 Android 命令行工具..."
+    local temp_dir="/tmp/android-sdk-install"
+    mkdir -p "$temp_dir"
+    
+    if ! wget -q --show-progress -O "$temp_dir/$cmdline_tools_zip" "$download_url" 2>/dev/null; then
+        # 如果 wget 失败，尝试 curl
+        if ! curl -L -o "$temp_dir/$cmdline_tools_zip" "$download_url" 2>/dev/null; then
+            echo "❌ 下载 Android 命令行工具失败"
+            echo ""
+            echo "   请手动下载并安装:"
+            echo "   1. 下载: $download_url"
+            echo "   2. 解压到: $sdk_root/cmdline-tools/latest"
+            echo "   3. 设置环境变量:"
+            echo "      export ANDROID_HOME=$sdk_root"
+            echo "      export PATH=\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin"
+            echo "   4. 重新运行此脚本"
+            return 1
+        fi
+    fi
+    
+    # 解压命令行工具
+    echo "   解压命令行工具..."
+    unzip -q -o "$temp_dir/$cmdline_tools_zip" -d "$temp_dir"
+    
+    # 移动到正确的位置 (需要在 cmdline-tools/latest 目录下)
+    rm -rf "$sdk_root/cmdline-tools/latest" 2>/dev/null
+    mv "$temp_dir/cmdline-tools" "$sdk_root/cmdline-tools/latest"
+    
+    # 清理临时文件
+    rm -rf "$temp_dir"
+    
+    # 设置环境变量
+    export ANDROID_HOME="$sdk_root"
+    export ANDROID_SDK_ROOT="$sdk_root"
+    export PATH="$PATH:$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools"
+    
+    # 接受许可协议并安装必要的组件
+    echo "   ⚠️  接受 Android SDK 许可协议..."
+    echo "   (包括 Google Play 服务, Android SDK 等许可协议)"
+    yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null 2>&1 || true
+    
+    echo "   安装 Android SDK 平台工具和构建工具..."
+    "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platform-tools" "build-tools;34.0.0" "platforms;android-34" 2>/dev/null
+    
+    # 将环境变量添加到 shell 配置文件
+    local shell_rc=""
+    if [ -f "$HOME/.bashrc" ]; then
+        shell_rc="$HOME/.bashrc"
+    elif [ -f "$HOME/.zshrc" ]; then
+        shell_rc="$HOME/.zshrc"
+    elif [ -f "$HOME/.profile" ]; then
+        shell_rc="$HOME/.profile"
+    fi
+    
+    if [ -n "$shell_rc" ]; then
+        # 检查是否已经添加过
+        if ! grep -q "ANDROID_HOME" "$shell_rc" 2>/dev/null; then
+            echo "" >> "$shell_rc"
+            echo "# Android SDK 环境变量" >> "$shell_rc"
+            echo "export ANDROID_HOME=\"$sdk_root\"" >> "$shell_rc"
+            echo "export ANDROID_SDK_ROOT=\"$sdk_root\"" >> "$shell_rc"
+            echo "export PATH=\"\$PATH:\$ANDROID_HOME/cmdline-tools/latest/bin:\$ANDROID_HOME/platform-tools\"" >> "$shell_rc"
+            echo "   环境变量已添加到 $shell_rc"
+        fi
+    fi
+    
+    echo "✅ Android SDK 安装成功: $ANDROID_HOME"
+    return 0
+}
+
 # 清理 Gradle 缓存 (修复损坏的 jar 文件问题)
-# 参数: $1 = "full" 进行完全清理, 否则进行部分清理
+# 参数: $1 = "full" 进行完全清理, "nuclear" 删除整个缓存, 否则进行部分清理
 clean_gradle_cache() {
     local clean_level="${1:-partial}"
     echo "🧹 清理 Gradle 缓存..."
     
     # 获取 Gradle 用户目录
     local gradle_home="${GRADLE_USER_HOME:-$HOME/.gradle}"
+    
+    # 首先停止所有 Gradle 守护进程 (避免文件锁定)
+    echo "   停止 Gradle 守护进程..."
+    if [ -f "android/gradlew" ]; then
+        (cd android && ./gradlew --stop 2>/dev/null || true)
+    fi
+    # 等待守护进程停止
+    sleep 2
     
     # 检查缓存目录是否存在
     if [ -d "$gradle_home/caches" ]; then
@@ -172,7 +288,7 @@ clean_gradle_cache() {
         done
         
         # 如果是完全清理，删除更多缓存目录
-        if [ "$clean_level" = "full" ]; then
+        if [ "$clean_level" = "full" ] || [ "$clean_level" = "nuclear" ]; then
             echo "   执行完全清理..."
             # 删除 modules 缓存
             for dir in "$gradle_home/caches"/modules-*; do
@@ -182,16 +298,26 @@ clean_gradle_cache() {
                 fi
             done
             # 删除 build-cache
-            if [ -d "$gradle_home/caches/build-cache-1" ]; then
-                echo "   删除 build-cache-1 缓存..."
-                rm -rf "$gradle_home/caches/build-cache-1"
+            for dir in "$gradle_home/caches"/build-cache-*; do
+                if [ -d "$dir" ]; then
+                    echo "   删除 $(basename "$dir") 缓存..."
+                    rm -rf "$dir"
+                fi
+            done
+            # 删除 generated-gradle-jars
+            if [ -d "$gradle_home/caches/generated-gradle-jars" ]; then
+                echo "   删除 generated-gradle-jars 缓存..."
+                rm -rf "$gradle_home/caches/generated-gradle-jars"
             fi
-            # 停止所有 Gradle 守护进程
-            echo "   停止 Gradle 守护进程..."
-            # 使用 gradle --stop 更安全
-            if [ -f "android/gradlew" ]; then
-                (cd android && ./gradlew --stop 2>/dev/null || true)
-            fi
+        fi
+        
+        # 核武器级别清理 - 删除整个 gradle 目录
+        if [ "$clean_level" = "nuclear" ]; then
+            echo "   ⚠️  执行核武器级别清理 (删除整个 Gradle 目录)..."
+            rm -rf "$gradle_home/caches"
+            rm -rf "$gradle_home/daemon"
+            rm -rf "$gradle_home/wrapper"
+            rm -rf "$gradle_home/native"
         fi
         
         echo "✅ Gradle 缓存清理完成"
@@ -400,7 +526,8 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
         if [ -d "$path" ]; then
             echo "🔍 检测到 Android SDK: $path"
             export ANDROID_HOME="$path"
-            export PATH="$PATH:$ANDROID_HOME/platform-tools"
+            export ANDROID_SDK_ROOT="$path"
+            export PATH="$PATH:$ANDROID_HOME/platform-tools:$ANDROID_HOME/cmdline-tools/latest/bin"
             SDK_FOUND=true
             break
         fi
@@ -410,27 +537,50 @@ if [ -z "$ANDROID_HOME" ] && [ -z "$ANDROID_SDK_ROOT" ]; then
         echo "   未检测到 Android SDK"
         echo ""
         echo "📋 选项:"
-        echo "   1. 在 Android Studio 中打开项目并构建:"
-        echo "      npx cap open android"
-        echo "      选择: Build → Build Bundle(s) / APK(s) → Build APK(s)"
+        echo "   1. 自动安装 Android SDK 命令行工具"
+        echo "   2. 在 Android Studio 中打开项目并构建"
+        echo "   3. 手动安装 Android SDK 后重新运行此脚本"
         echo ""
-        echo "   2. 安装 Android SDK 后重新运行此脚本"
         
-        if ask_install "查看 Android SDK 安装指南"; then
+        if ask_install "Android SDK 命令行工具"; then
+            install_android_sdk
+            if [ $? -eq 0 ]; then
+                SDK_FOUND=true
+            else
+                echo ""
+                echo "⚠️  Android SDK 安装失败"
+                show_android_sdk_guide
+                
+                if [ "$AUTO_INSTALL" = true ]; then
+                    echo "⚠️  继续构建，但可能会失败..."
+                else
+                    echo ""
+                    read -p "是否继续尝试构建? (y/n): " continue_build
+                    case "$continue_build" in
+                        y|Y|yes|YES)
+                            echo "⚠️  继续构建，但可能会失败..."
+                            ;;
+                        *)
+                            echo "👋 退出脚本"
+                            exit 0
+                            ;;
+                    esac
+                fi
+            fi
+        else
             show_android_sdk_guide
+            echo ""
+            read -p "是否继续尝试构建? (y/n): " continue_build
+            case "$continue_build" in
+                y|Y|yes|YES)
+                    echo "⚠️  继续构建，但可能会失败..."
+                    ;;
+                *)
+                    echo "👋 退出脚本"
+                    exit 0
+                    ;;
+            esac
         fi
-        
-        echo ""
-        read -p "是否继续尝试构建? (y/n): " continue_build
-        case "$continue_build" in
-            y|Y|yes|YES)
-                echo "⚠️  继续构建，但可能会失败..."
-                ;;
-            *)
-                echo "👋 退出脚本"
-                exit 0
-                ;;
-        esac
     fi
 fi
 
@@ -471,10 +621,28 @@ run_gradle_build() {
 # 检测 Gradle 缓存损坏错误
 is_gradle_cache_error() {
     local output="$1"
-    # 检测多种缓存损坏相关的错误模式
-    if echo "$output" | grep -qE "(Failed to create Jar file|Could not create entry|Couldn't create parent directory|java\.util\.zip\.ZipException|Failed to read entry|Corrupt|Unable to delete stale cache)"; then
-        return 0
-    fi
+    
+    # 定义缓存损坏相关的错误模式数组
+    local patterns=(
+        "Failed to create Jar file"
+        "Could not create entry"
+        "Couldn't create parent directory"
+        "java\.util\.zip\.ZipException"
+        "Failed to read entry"
+        "Corrupt"
+        "Unable to delete stale cache"
+        "bcprov-jdk"
+        "bouncycastle"
+        "Lock file"
+        "lock held by"
+    )
+    
+    # 检测任一模式
+    for pattern in "${patterns[@]}"; do
+        if echo "$output" | grep -qE "$pattern"; then
+            return 0
+        fi
+    done
     return 1
 }
 
@@ -533,10 +701,36 @@ if [ $BUILD_RESULT -ne 0 ]; then
             rm -rf .gradle 2>/dev/null || true
             
             echo ""
-            echo "🔄 最后一次尝试构建..."
+            echo "🔄 第二次重试构建..."
             BUILD_OUTPUT=$(run_gradle_build "true")
             BUILD_RESULT=$?
             echo "$BUILD_OUTPUT"
+            
+            # 如果仍然失败，尝试核武器级别清理
+            if [ $BUILD_RESULT -ne 0 ] && is_gradle_cache_error "$BUILD_OUTPUT"; then
+                echo ""
+                echo "════════════════════════════════════════════════════════════"
+                echo "⚠️  完全清理后仍有缓存问题"
+                echo "   正在执行核武器级别清理 (删除所有 Gradle 缓存)..."
+                echo "════════════════════════════════════════════════════════════"
+                echo ""
+                
+                cd ..
+                clean_gradle_cache "nuclear"
+                cd android
+                
+                # 再次清理项目级别的构建目录
+                echo "🧹 清理项目构建目录..."
+                rm -rf app/build 2>/dev/null || true
+                rm -rf build 2>/dev/null || true
+                rm -rf .gradle 2>/dev/null || true
+                
+                echo ""
+                echo "🔄 最后一次尝试构建 (核武器级别清理后)..."
+                BUILD_OUTPUT=$(run_gradle_build "true")
+                BUILD_RESULT=$?
+                echo "$BUILD_OUTPUT"
+            fi
         fi
     fi
 fi
