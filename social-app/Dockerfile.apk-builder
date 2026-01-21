@@ -144,14 +144,17 @@ fi
 #       kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8，导致类重复错误
 # 解决: 在 build.gradle 中添加依赖解析策略，强制使用统一版本
 # =============================================================================
+KOTLIN_VERSION=${KOTLIN_VERSION:-1.8.22}
 echo ""
-echo "🔧 修复 Kotlin 依赖冲突..."
+echo "🔧 修复 Kotlin 依赖冲突 (Kotlin $KOTLIN_VERSION)..."
 if [ -f "android/build.gradle" ]; then
-    # 检查是否已经添加了修复
-    if ! grep -q "kotlin-stdlib-jdk" "android/build.gradle"; then
+    # 使用唯一标记检测是否已经添加了修复
+    KOTLIN_FIX_MARKER="QUWAN_KOTLIN_STDLIB_FIX_APPLIED"
+    if ! grep -q "$KOTLIN_FIX_MARKER" "android/build.gradle"; then
         # 追加 Kotlin 版本解析策略到文件末尾
-        cat >> "android/build.gradle" << 'KOTLIN_FIX'
+        cat >> "android/build.gradle" << KOTLIN_FIX
 
+// $KOTLIN_FIX_MARKER
 // =============================================================================
 // 修复 Kotlin stdlib 重复类冲突
 // 从 Kotlin 1.8 开始，kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8 已合并到 kotlin-stdlib
@@ -162,7 +165,7 @@ subprojects {
         configurations.all {
             resolutionStrategy.eachDependency { details ->
                 if (details.requested.group == 'org.jetbrains.kotlin') {
-                    details.useVersion '1.8.22'
+                    details.useVersion '$KOTLIN_VERSION'
                 }
             }
             // 排除旧版本的 kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8

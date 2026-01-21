@@ -168,6 +168,17 @@ ARG BUILD_TOOLS_VERSION=34.0.0
 ARG PLATFORM_VERSION=android-34
 ```
 
+### 自定义 Kotlin 版本
+
+构建脚本会自动修复 Kotlin stdlib 依赖冲突。默认使用 Kotlin 1.8.22，如需自定义版本，可以在运行容器时设置环境变量：
+
+```bash
+docker run --rm \
+    -v $(pwd)/output:/app/output \
+    -e KOTLIN_VERSION=1.9.0 \
+    social-app-apk-builder debug
+```
+
 ### 增加内存限制
 
 如果构建失败，可能需要增加 Docker 内存限制：
