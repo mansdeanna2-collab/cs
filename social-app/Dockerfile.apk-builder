@@ -138,6 +138,48 @@ if [ ! -d "android" ]; then
     fi
 fi
 
+# =============================================================================
+# 修复 Kotlin stdlib 重复类冲突
+# 问题: kotlin-stdlib 1.8+ 已包含 jdk7/jdk8 类，但某些依赖可能引入旧版本的
+#       kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8，导致类重复错误
+# 解决: 在 build.gradle 中添加依赖解析策略，强制使用统一版本
+# =============================================================================
+echo ""
+echo "🔧 修复 Kotlin 依赖冲突..."
+if [ -f "android/build.gradle" ]; then
+    # 检查是否已经添加了修复
+    if ! grep -q "kotlin-stdlib-jdk" "android/build.gradle"; then
+        # 追加 Kotlin 版本解析策略到文件末尾
+        cat >> "android/build.gradle" << 'KOTLIN_FIX'
+
+// =============================================================================
+// 修复 Kotlin stdlib 重复类冲突
+// 从 Kotlin 1.8 开始，kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8 已合并到 kotlin-stdlib
+// 这个配置确保所有模块使用统一的 Kotlin 版本，避免类重复错误
+// =============================================================================
+subprojects {
+    afterEvaluate {
+        configurations.all {
+            resolutionStrategy.eachDependency { details ->
+                if (details.requested.group == 'org.jetbrains.kotlin') {
+                    details.useVersion '1.8.22'
+                }
+            }
+            // 排除旧版本的 kotlin-stdlib-jdk7 和 kotlin-stdlib-jdk8
+            exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+            exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+        }
+    }
+}
+KOTLIN_FIX
+        echo "✅ Kotlin 依赖冲突修复已应用"
+    else
+        echo "✅ Kotlin 依赖冲突修复已存在"
+    fi
+else
+    echo "⚠️  未找到 android/build.gradle，跳过 Kotlin 修复"
+fi
+
 # 构建 Web 应用
 echo ""
 echo "🔨 构建 Web 应用..."
