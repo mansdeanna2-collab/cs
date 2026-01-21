@@ -12,8 +12,8 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
-    const { target } = event;
-    if (!(target instanceof Element) || target.closest(EDITABLE_SELECTOR)) {
+    const target = event.target as Element | null;
+    if (!target || target.closest(EDITABLE_SELECTOR)) {
       return;
     }
     event.preventDefault();

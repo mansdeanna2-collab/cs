@@ -148,7 +148,7 @@ button:active, .touchable:active {
   opacity: 0.9;
 }
 
-.app-container .editable-field {
+.editable-field {
   -webkit-user-select: text;
   user-select: text;
 }
