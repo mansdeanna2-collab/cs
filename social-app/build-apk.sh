@@ -154,22 +154,22 @@ install_nodejs() {
 # 安装 Java/JDK
 install_java() {
     local os=$(detect_os)
-    echo "🔄 正在安装 JDK 17..."
+    echo "🔄 正在安装 JDK 21..."
     
     case $os in
         ubuntu|debian)
             sudo apt-get update 2>/dev/null
-            sudo apt-get install -y openjdk-17-jdk 2>/dev/null
+            sudo apt-get install -y openjdk-21-jdk 2>/dev/null
             ;;
         centos|rhel|fedora)
-            sudo yum install -y java-17-openjdk-devel 2>/dev/null || sudo dnf install -y java-17-openjdk-devel 2>/dev/null
+            sudo yum install -y java-21-openjdk-devel 2>/dev/null || sudo dnf install -y java-21-openjdk-devel 2>/dev/null
             ;;
         macos)
             if command -v brew &> /dev/null; then
-                brew install openjdk@17
-                BREW_PREFIX=$(brew --prefix openjdk@17 2>/dev/null)
+                brew install openjdk@21
+                BREW_PREFIX=$(brew --prefix openjdk@21 2>/dev/null)
                 if [ -n "$BREW_PREFIX" ] && [ -d "$BREW_PREFIX/libexec/openjdk.jdk" ]; then
-                    sudo ln -sfn "$BREW_PREFIX/libexec/openjdk.jdk" /Library/Java/JavaVirtualMachines/openjdk-17.jdk 2>/dev/null
+                    sudo ln -sfn "$BREW_PREFIX/libexec/openjdk.jdk" /Library/Java/JavaVirtualMachines/openjdk-21.jdk 2>/dev/null
                 fi
             else
                 echo "❌ 请先安装 Homebrew: https://brew.sh"
@@ -177,7 +177,7 @@ install_java() {
             fi
             ;;
         *)
-            echo "⚠️  无法自动安装，请手动安装 JDK 17+"
+            echo "⚠️  无法自动安装，请手动安装 JDK 21+"
             echo "   下载地址: https://adoptium.net/"
             return 1
             ;;
@@ -488,17 +488,17 @@ if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
                 exit 1
                 ;;
             java)
-                if ask_install "Java JDK 17"; then
+                if ask_install "Java JDK 21"; then
                     install_java
                     if [ $? -ne 0 ]; then
                         echo ""
                         echo "⚠️  Java 安装失败，但可以继续"
-                        echo "   如需命令行构建 APK，请手动安装 JDK 17+"
+                        echo "   如需命令行构建 APK，请手动安装 JDK 21+"
                     fi
                 else
                     echo ""
                     echo "⚠️  跳过 Java 安装"
-                    echo "   如需命令行构建 APK，请手动安装 JDK 17+"
+                    echo "   如需命令行构建 APK，请手动安装 JDK 21+"
                 fi
                 ;;
         esac
