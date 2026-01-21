@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import './styles/global.css';
-import StatusBar from './components/StatusBar';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
 import PartyPage from './pages/PartyPage';
@@ -26,8 +25,7 @@ function App() {
   };
 
   return (
-    <div className="app-container light-theme">
-      <StatusBar />
+    <div className="app-container light-theme" onContextMenu={(event) => event.preventDefault()}>
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>

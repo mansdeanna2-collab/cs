@@ -103,6 +103,9 @@ body {
   overflow-x: hidden;
   letter-spacing: -0.01em;
   transition: background-color var(--transition-slow), color var(--transition-slow);
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Scrollbar Styles */
@@ -128,6 +131,7 @@ body {
   background: var(--bg-primary);
   overflow: hidden;
   transition: background-color var(--transition-slow);
+  padding-top: 12px;
 }
 
 /* Global Touch Feedback */
@@ -145,6 +149,13 @@ button:active, .touchable:active {
 button, a, .touchable, .nav-item, .menu-item, .card {
   -webkit-user-select: none;
   user-select: none;
+  -webkit-touch-callout: none;
+}
+
+img, svg {
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
 }
 
 /* Theme transition overlay */
