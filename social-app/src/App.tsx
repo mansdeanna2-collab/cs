@@ -13,11 +13,7 @@ function App() {
 
   const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
     const { target } = event;
-    if (!(target instanceof Element)) {
-      event.preventDefault();
-      return;
-    }
-    if (target.closest(EDITABLE_SELECTOR)) {
+    if (!(target instanceof Element) || target.closest(EDITABLE_SELECTOR)) {
       return;
     }
     event.preventDefault();
