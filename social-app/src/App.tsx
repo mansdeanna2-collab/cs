@@ -9,6 +9,14 @@ import ProfilePage from './pages/ProfilePage';
 function App() {
   const [activeTab, setActiveTab] = useState('home');
 
+  const handleContextMenu = (event: React.MouseEvent<HTMLDivElement>) => {
+    const target = event.target as HTMLElement;
+    if (target.closest('input, textarea, [contenteditable="true"]') || target.isContentEditable) {
+      return;
+    }
+    event.preventDefault();
+  };
+
   const renderPage = () => {
     switch (activeTab) {
       case 'home':
@@ -25,7 +33,7 @@ function App() {
   };
 
   return (
-    <div className="app-container light-theme" onContextMenu={(event) => event.preventDefault()}>
+    <div className="app-container light-theme" onContextMenu={handleContextMenu}>
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
