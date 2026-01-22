@@ -183,27 +183,41 @@
   justify-content: center;
 }
 
-.stage-curtain {
+/* Red Arch/Stage Background */
+.stage-arch {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(180deg, #C62828 0%, #8E0000 50%, #C62828 100%);
-  border-radius: 45px 45px 20px 20px;
-  opacity: 0.9;
-  box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.3), 0 4px 16px rgba(198, 40, 40, 0.4);
+  background: linear-gradient(180deg, #D32F2F 0%, #B71C1C 100%);
+  border-radius: 45px 45px 25px 25px;
+  box-shadow: 0 4px 16px rgba(183, 28, 28, 0.4);
 }
 
-.stage-curtain::before {
+.stage-arch::before {
   content: '';
   position: absolute;
   top: 0;
   left: 5px;
   right: 5px;
-  height: 15px;
+  height: 12px;
   background: linear-gradient(180deg, #FFD700 0%, #FFA000 100%);
   border-radius: 20px 20px 0 0;
+}
+
+.arch-lights {
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+}
+
+.arch-light {
+  font-size: 8px;
+  animation: pulse 1.5s ease-in-out infinite;
 }
 
 .mascot-figure {
@@ -217,35 +231,35 @@
 
 .mascot-hat {
   position: relative;
-  width: 36px;
-  height: 24px;
-  background: linear-gradient(180deg, #2196F3 0%, #1565C0 100%);
-  border-radius: 50% 50% 30% 30%;
+  width: 40px;
+  height: 26px;
+  background: linear-gradient(180deg, #64B5F6 0%, #1E88E5 100%);
+  border-radius: 50% 50% 35% 35%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: -8px;
+  margin-bottom: -10px;
   z-index: 3;
-  box-shadow: 0 2px 8px rgba(33, 150, 243, 0.4);
+  box-shadow: 0 2px 8px rgba(30, 136, 229, 0.4);
 }
 
 .hat-candle {
   position: absolute;
-  top: -12px;
-  font-size: 12px;
+  top: -14px;
+  font-size: 14px;
   animation: float 2s ease-in-out infinite;
 }
 
 .hat-number {
-  font-size: 12px;
-  font-weight: 700;
+  font-size: 14px;
+  font-weight: 800;
   color: #FFFFFF;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .mascot-body {
-  width: 50px;
-  height: 55px;
+  width: 55px;
+  height: 60px;
   background: linear-gradient(180deg, #FFFFFF 0%, #F5F5F5 100%);
   border-radius: 50%;
   display: flex;
@@ -253,19 +267,28 @@
   align-items: center;
   justify-content: center;
   position: relative;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border: 2px solid #FFFFFF;
 }
 
-.mascot-face {
-  font-size: 20px;
-  margin-top: 4px;
+.mascot-face-area {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.mascot-eyes {
+  font-size: 16px;
+  color: #333333;
+  font-weight: bold;
 }
 
 .mascot-wave {
   position: absolute;
-  top: 8px;
-  right: -10px;
-  font-size: 14px;
+  top: 5px;
+  right: -12px;
+  font-size: 16px;
   animation: swing 1s ease-in-out infinite;
 }
 

@@ -121,24 +121,48 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - 5 Icons */}
       <section className="quick-actions">
         <div className="action-item">
-          <span className="action-icon">🎯</span>
-          <span className="action-text">快速匹配</span>
-        </div>
-        <div className="action-item">
-          <span className="action-icon">🏆</span>
+          <div className="action-icon-wrapper action-icon-black">
+            <span className="action-icon-text">路</span>
+          </div>
           <span className="action-text">排行榜</span>
         </div>
         <div className="action-item">
-          <span className="action-icon">🎁</span>
-          <span className="action-text">每日签到</span>
+          <div className="action-icon-wrapper action-icon-blue">
+            <span className="action-icon">🃏</span>
+          </div>
+          <span className="action-text">游玩卡</span>
+        </div>
+        <div className="action-item action-with-badge">
+          <div className="action-icon-wrapper action-icon-purple">
+            <span className="action-icon">👕</span>
+          </div>
+          <span className="action-badge-new">上新</span>
+          <span className="action-text">会玩秀</span>
         </div>
         <div className="action-item">
-          <span className="action-icon">💎</span>
-          <span className="action-text">VIP特权</span>
+          <div className="action-icon-wrapper action-icon-red">
+            <span className="action-icon">🛍️</span>
+          </div>
+          <span className="action-text">商城</span>
         </div>
+        <div className="action-item">
+          <div className="action-icon-wrapper action-icon-orange">
+            <span className="action-icon">😊</span>
+          </div>
+          <span className="action-text">好友在玩</span>
+        </div>
+      </section>
+
+      {/* Content Title Bar */}
+      <section className="content-title-bar">
+        <h2 className="content-title">一起玩</h2>
+        <button className="room-button">
+          <span className="room-icon">🪟</span>
+          <span className="room-text">桌游房间</span>
+        </button>
       </section>
 
       {/* Game Cards Area - New Design */}

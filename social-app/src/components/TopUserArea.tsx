@@ -60,14 +60,22 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
         {/* Center: Mascot */}
         <div className="mascot-container">
           <div className="mascot-stage">
-            <div className="stage-curtain"></div>
+            <div className="stage-arch">
+              <div className="arch-lights">
+                <span className="arch-light">💡</span>
+                <span className="arch-light">💡</span>
+                <span className="arch-light">💡</span>
+              </div>
+            </div>
             <div className="mascot-figure">
               <div className="mascot-hat">
                 <span className="hat-candle">🕯️</span>
                 <span className="hat-number">12</span>
               </div>
               <div className="mascot-body">
-                <span className="mascot-face">😊</span>
+                <div className="mascot-face-area">
+                  <span className="mascot-eyes">◠‿◠</span>
+                </div>
                 <span className="mascot-wave">👋</span>
               </div>
             </div>
