@@ -86,41 +86,6 @@ const HomePage: React.FC = () => {
       {/* Top User Area */}
       <TopUserArea />
 
-      {/* Header */}
-      <header className="home-header">
-        <div className="header-left">
-          <span className="logo">🎮</span>
-          <h1 className="app-title">趣玩社区</h1>
-        </div>
-        <div className="header-right">
-          <button className="header-btn search-btn">🔍</button>
-          <button className="header-btn notification-btn">
-            🔔
-            <span className="notification-dot"></span>
-          </button>
-        </div>
-      </header>
-
-      {/* Server Broadcast Announcement */}
-      <section className="broadcast-section">
-        <div className="broadcast-bar">
-          <div className="broadcast-icon">
-            <span className="megaphone">📢</span>
-          </div>
-          <div className="broadcast-content">
-            <div className="broadcast-marquee">
-              <span className="broadcast-text">
-                🎉 新年派对狂欢季火热进行中！参与游戏赢取海量金币奖励 · 
-                🏆 排行榜已更新，快来查看你的排名 · 
-                💎 VIP专属福利限时领取中 · 
-                🎮 新游戏"你画我猜"已上线
-              </span>
-            </div>
-          </div>
-          <button className="broadcast-close">×</button>
-        </div>
-      </section>
-
       {/* Quick Actions - 5 Icons */}
       <section className="quick-actions">
         <div className="action-item">
@@ -130,8 +95,8 @@ const HomePage: React.FC = () => {
           <span className="action-text">排行榜</span>
         </div>
         <div className="action-item">
-          <div className="action-icon-wrapper action-icon-blue">
-            <span className="action-icon">🃏</span>
+          <div className="action-icon-wrapper action-icon-blue-purple">
+            <span className="action-icon-card">8</span>
           </div>
           <span className="action-text">游玩卡</span>
         </div>
