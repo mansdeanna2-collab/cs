@@ -27,6 +27,8 @@ function App() {
         return <PartyPage />;
       case 'messages':
         return <MessagesPage />;
+      case 'discover':
+        return <HomePage />; // Placeholder for discover page
       case 'profile':
         return <ProfilePage />;
       default:
