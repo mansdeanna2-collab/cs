@@ -141,26 +141,19 @@ body {
 button, .touchable {
   -webkit-tap-highlight-color: transparent;
   touch-action: manipulation;
+}
+
+/* Remove blue focus box on touch/mouse interaction, but preserve for keyboard navigation */
+button:focus:not(:focus-visible),
+.touchable:focus:not(:focus-visible) {
   outline: none;
 }
 
-/* Remove blue selection/focus box on long press */
-button:focus,
+/* Provide a subtle focus indicator for keyboard navigation */
 button:focus-visible,
-.touchable:focus,
-.touchable:focus-visible,
-*:focus {
-  outline: none;
-  -webkit-tap-highlight-color: transparent;
-}
-
-/* Remove blue selection highlight */
-*::selection {
-  background: transparent;
-}
-
-*::-moz-selection {
-  background: transparent;
+.touchable:focus-visible {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 button:active, .touchable:active {
