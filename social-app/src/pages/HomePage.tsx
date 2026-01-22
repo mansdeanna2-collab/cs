@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './HomePage.css';
+import TopUserArea from '../components/TopUserArea';
 
 interface Game {
   id: number;
@@ -110,6 +111,9 @@ const HomePage: React.FC = () => {
 
   return (
     <div className="home-page">
+      {/* Top User Area */}
+      <TopUserArea />
+
       {/* Header */}
       <header className="home-header">
         <div className="header-left">
