@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import './HomePage.css';
-
-interface Game {
-  id: number;
-  name: string;
-  icon: string;
-  players: number;
-  category: string;
-  gradient: string;
-  isHot?: boolean;
-  isNew?: boolean;
-}
+import TopUserArea from '../components/TopUserArea';
+import GameCardsArea from '../components/GameCardsArea';
 
 interface Post {
   id: number;
@@ -27,15 +18,6 @@ interface Post {
   time: string;
   isLiked?: boolean;
 }
-
-const games: Game[] = [
-  { id: 1, name: '狼人杀', icon: '🐺', players: 12580, category: '桌游', gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)', isHot: true },
-  { id: 2, name: '你画我猜', icon: '🎨', players: 8920, category: '休闲', gradient: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)', isNew: true },
-  { id: 3, name: '谁是卧底', icon: '🕵️', players: 6540, category: '益智', gradient: 'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)' },
-  { id: 4, name: 'UNO', icon: '🃏', players: 5230, category: '桌游', gradient: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)' },
-  { id: 5, name: '真心话大冒险', icon: '💕', players: 9870, category: '互动', gradient: 'linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)', isHot: true },
-  { id: 6, name: 'K歌房', icon: '🎤', players: 15320, category: '音乐', gradient: 'linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)', isNew: true },
-];
 
 const posts: Post[] = [
   {
@@ -86,9 +68,6 @@ const posts: Post[] = [
 
 const HomePage: React.FC = () => {
   const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set([1]));
-  const [activeCategory, setActiveCategory] = useState('全部');
-
-  const categories = ['全部', '🔥热门', '🎮桌游', '🎵音乐', '💕互动', '🧠益智'];
 
   const toggleLike = (postId: number) => {
     setLikedPosts(prev => {
@@ -102,14 +81,11 @@ const HomePage: React.FC = () => {
     });
   };
 
-  const formatNumber = (num: number): string => {
-    if (num >= 10000) return (num / 10000).toFixed(1) + 'w';
-    if (num >= 1000) return (num / 1000).toFixed(1) + 'k';
-    return num.toString();
-  };
-
   return (
     <div className="home-page">
+      {/* Top User Area */}
+      <TopUserArea />
+
       {/* Header */}
       <header className="home-header">
         <div className="header-left">
@@ -145,65 +121,52 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - 5 Icons */}
       <section className="quick-actions">
         <div className="action-item">
-          <span className="action-icon">🎯</span>
-          <span className="action-text">快速匹配</span>
-        </div>
-        <div className="action-item">
-          <span className="action-icon">🏆</span>
+          <div className="action-icon-wrapper action-icon-black">
+            <span className="action-icon-text">路</span>
+          </div>
           <span className="action-text">排行榜</span>
         </div>
         <div className="action-item">
-          <span className="action-icon">🎁</span>
-          <span className="action-text">每日签到</span>
+          <div className="action-icon-wrapper action-icon-blue">
+            <span className="action-icon">🃏</span>
+          </div>
+          <span className="action-text">游玩卡</span>
+        </div>
+        <div className="action-item action-with-badge">
+          <div className="action-icon-wrapper action-icon-purple">
+            <span className="action-icon">👕</span>
+          </div>
+          <span className="action-badge-new">上新</span>
+          <span className="action-text">会玩秀</span>
         </div>
         <div className="action-item">
-          <span className="action-icon">💎</span>
-          <span className="action-text">VIP特权</span>
+          <div className="action-icon-wrapper action-icon-red">
+            <span className="action-icon">🛍️</span>
+          </div>
+          <span className="action-text">商城</span>
+        </div>
+        <div className="action-item">
+          <div className="action-icon-wrapper action-icon-orange">
+            <span className="action-icon">😊</span>
+          </div>
+          <span className="action-text">好友在玩</span>
         </div>
       </section>
 
-      {/* Games Section */}
-      <section className="games-section">
-        <div className="section-header">
-          <h2 className="section-title">
-            <span className="title-icon">🎮</span>
-            热门游戏
-          </h2>
-          <button className="see-all-btn">查看全部 →</button>
-        </div>
-        
-        {/* Category Tabs */}
-        <div className="category-tabs">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              className={`category-tab ${activeCategory === cat ? 'active' : ''}`}
-              onClick={() => setActiveCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
-
-        {/* Games Grid */}
-        <div className="games-grid">
-          {games.map((game) => (
-            <div key={game.id} className="game-card" style={{ background: game.gradient }}>
-              {game.isHot && <span className="game-badge hot">🔥 热门</span>}
-              {game.isNew && <span className="game-badge new">✨ 新游</span>}
-              <span className="game-icon">{game.icon}</span>
-              <h3 className="game-name">{game.name}</h3>
-              <div className="game-info">
-                <span className="game-players">👥 {formatNumber(game.players)}人在玩</span>
-              </div>
-              <button className="play-btn">开始游戏</button>
-            </div>
-          ))}
-        </div>
+      {/* Content Title Bar */}
+      <section className="content-title-bar">
+        <h2 className="content-title">一起玩</h2>
+        <button className="room-button">
+          <span className="room-icon">🪟</span>
+          <span className="room-text">桌游房间</span>
+        </button>
       </section>
+
+      {/* Game Cards Area - New Design */}
+      <GameCardsArea />
 
       {/* Divider */}
       <div className="section-divider">
