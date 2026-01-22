@@ -56,6 +56,20 @@
   50% { box-shadow: 0 0 12px 4px rgba(255, 215, 0, 0.8), 0 0 24px 8px rgba(255, 215, 0, 0.5); }
 }
 
+/* Position classes for decorations */
+.light-pos-1 { left: 5%; }
+.light-pos-2 { left: 50%; transform: translateX(-50%); }
+.light-pos-3 { right: 5%; }
+
+.sparkle-pos-1 { left: 13%; }
+.sparkle-pos-2 { left: 36%; }
+.sparkle-pos-3 { left: 76%; }
+
+.ribbon-pos-1 { left: 23%; }
+.ribbon-pos-2 { left: 89%; }
+
+.vine-pos-1 { left: 63%; }
+
 /* Sparkle Star */
 .sparkle-star {
   position: absolute;
@@ -543,16 +557,12 @@
   bottom: 40px;
   right: 5px;
   transform: scale(0.7);
-  animation: floatHeart 2s ease-in-out infinite 0.5s;
+  animation: floatHeartSmall 2s ease-in-out infinite 0.5s;
 }
 
 @keyframes floatHeart {
   0%, 100% { transform: translateY(0) scale(1); opacity: 0.8; }
   50% { transform: translateY(-8px) scale(1.1); opacity: 1; }
-}
-
-.heart-2 {
-  animation-name: floatHeartSmall;
 }
 
 @keyframes floatHeartSmall {

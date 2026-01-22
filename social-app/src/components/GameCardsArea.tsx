@@ -6,7 +6,7 @@ interface GameCard {
   name: string;
   character: string;
   gradient: string;
-  textColor?: string;
+  darkText?: boolean;
   badge?: {
     text: string;
     type: 'hot' | 'new' | 'special';
@@ -28,7 +28,7 @@ const gameCards: GameCard[] = [
     name: '开心卧底',
     character: '🕵️',
     gradient: 'linear-gradient(135deg, #E9D5FF 0%, #F5D0FE 100%)',
-    textColor: '#6B21A8',
+    darkText: true,
     badge: { text: '热门', type: 'hot' }
   },
   {
@@ -76,7 +76,7 @@ const gameCards: GameCard[] = [
     name: '梦幻岛',
     character: '🌴',
     gradient: 'linear-gradient(135deg, #F9A8D4 0%, #F472B6 100%)',
-    textColor: '#BE185D'
+    darkText: true
   },
   {
     id: 10,
@@ -171,10 +171,7 @@ const GameCardsArea: React.FC = () => {
             )}
 
             {/* Game Title */}
-            <h3 
-              className="card-title"
-              style={{ color: game.textColor || '#FFFFFF' }}
-            >
+            <h3 className={`card-title ${game.darkText ? 'dark-text' : ''}`}>
               {game.name}
             </h3>
 

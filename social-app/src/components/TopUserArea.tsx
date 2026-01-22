@@ -22,21 +22,21 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
       <div className="festival-decorations">
         <div className="decoration-lights">
           {/* Hanging light bulbs with lines */}
-          <div className="hanging-light" style={{ left: '20px' }}>
+          <div className="hanging-light light-pos-1">
             <div className="light-wire"></div>
             <div className="light-bulb"></div>
           </div>
-          <div className="sparkle-star" style={{ left: '50px' }}></div>
-          <div className="ribbon-bow" style={{ left: '90px' }}></div>
-          <div className="sparkle-star small" style={{ left: '140px' }}></div>
-          <div className="hanging-light" style={{ left: '200px' }}>
+          <div className="sparkle-star sparkle-pos-1"></div>
+          <div className="ribbon-bow ribbon-pos-1"></div>
+          <div className="sparkle-star small sparkle-pos-2"></div>
+          <div className="hanging-light light-pos-2">
             <div className="light-wire"></div>
             <div className="light-bulb"></div>
           </div>
-          <div className="vine-decoration" style={{ left: '250px' }}></div>
-          <div className="sparkle-star double" style={{ left: '300px' }}></div>
-          <div className="ribbon-bow small" style={{ left: '350px' }}></div>
-          <div className="hanging-light" style={{ right: '20px' }}>
+          <div className="vine-decoration vine-pos-1"></div>
+          <div className="sparkle-star double sparkle-pos-3"></div>
+          <div className="ribbon-bow small ribbon-pos-2"></div>
+          <div className="hanging-light light-pos-3">
             <div className="light-wire"></div>
             <div className="light-bulb"></div>
           </div>
