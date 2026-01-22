@@ -6,6 +6,7 @@ interface GameCard {
   name: string;
   character: string;
   gradient: string;
+  darkText?: boolean;
   badge?: {
     text: string;
     type: 'hot' | 'new' | 'special';
@@ -26,14 +27,15 @@ const gameCards: GameCard[] = [
     id: 2,
     name: '开心卧底',
     character: '🕵️',
-    gradient: 'linear-gradient(135deg, #E879F9 0%, #F0ABFC 100%)',
+    gradient: 'linear-gradient(135deg, #E9D5FF 0%, #F5D0FE 100%)',
+    darkText: true,
     badge: { text: '热门', type: 'hot' }
   },
   {
     id: 3,
     name: '抢唱合唱',
     character: '🎤',
-    gradient: 'linear-gradient(135deg, #F472B6 0%, #A855F7 100%)'
+    gradient: 'linear-gradient(135deg, #F472B6 0%, #C084FC 100%)'
   },
   {
     id: 4,
@@ -65,7 +67,7 @@ const gameCards: GameCard[] = [
     id: 8,
     name: '你演我猜',
     character: '💃',
-    gradient: 'linear-gradient(135deg, #06B6D4 0%, #14B8A6 100%)',
+    gradient: 'linear-gradient(135deg, #14B8A6 0%, #0D9488 100%)',
     badge: { text: '热门', type: 'hot' },
     promo: '新春三折礼包'
   },
@@ -73,13 +75,14 @@ const gameCards: GameCard[] = [
     id: 9,
     name: '梦幻岛',
     character: '🌴',
-    gradient: 'linear-gradient(135deg, #FB7185 0%, #FDA4AF 100%)'
+    gradient: 'linear-gradient(135deg, #F9A8D4 0%, #F472B6 100%)',
+    darkText: true
   },
   {
     id: 10,
     name: '爪力全开',
     character: '🐱',
-    gradient: 'linear-gradient(135deg, #8B5CF6 0%, #A855F7 100%)',
+    gradient: 'linear-gradient(135deg, #A78BFA 0%, #8B5CF6 100%)',
     badge: { text: 'NEW', type: 'new' },
     countdown: '剩2天'
   }
@@ -88,19 +91,54 @@ const gameCards: GameCard[] = [
 const GameCardsArea: React.FC = () => {
   return (
     <section className="game-cards-area">
-      {/* Top Banner Card */}
+      {/* Top Banner Card - Enhanced Pig Card Game Scene */}
       <div className="banner-card">
         <div className="banner-background">
-          <div className="banner-decorations">
-            <span className="banner-flag">🎊</span>
-            <span className="banner-light">💡</span>
-            <span className="banner-star">✨</span>
+          {/* Hanging flags/bunting */}
+          <div className="banner-bunting">
+            <div className="bunting-flag flag-red"></div>
+            <div className="bunting-flag flag-yellow"></div>
+            <div className="bunting-flag flag-blue"></div>
+            <div className="bunting-flag flag-green"></div>
+            <div className="bunting-flag flag-red"></div>
+            <div className="bunting-flag flag-yellow"></div>
+            <div className="bunting-flag flag-blue"></div>
           </div>
-          <div className="banner-characters">
-            <span className="pig pig-1">🐷</span>
-            <span className="pig pig-2">🐽</span>
-            <span className="pig pig-3">🐖</span>
-            <span className="cards-icon">🃏</span>
+          {/* Light bulbs at top */}
+          <div className="banner-light-string">
+            <span className="banner-bulb"></span>
+            <span className="banner-bulb"></span>
+            <span className="banner-bulb"></span>
+            <span className="banner-bulb"></span>
+            <span className="banner-bulb"></span>
+          </div>
+          {/* Card table scene */}
+          <div className="card-table-scene">
+            <div className="poker-table"></div>
+            <div className="scattered-cards">
+              <div className="playing-card card-1"></div>
+              <div className="playing-card card-2"></div>
+              <div className="playing-card card-3"></div>
+            </div>
+          </div>
+          {/* Pig characters */}
+          <div className="pig-characters">
+            <div className="pig-char tiger">
+              <div className="char-body">🐯</div>
+            </div>
+            <div className="pig-char pink-pig">
+              <div className="char-body">🐷</div>
+            </div>
+            <div className="pig-char white-pig">
+              <div className="char-body">🐽</div>
+            </div>
+            <div className="pig-char brown-pig">
+              <div className="char-body">🐖</div>
+            </div>
+            <div className="pig-char boss-pig">
+              <div className="char-body">🦔</div>
+              <div className="sunglasses">🕶️</div>
+            </div>
           </div>
         </div>
         <div className="banner-content">
@@ -112,7 +150,7 @@ const GameCardsArea: React.FC = () => {
         </div>
       </div>
 
-      {/* Game Cards Grid */}
+      {/* Game Cards Grid - 2 columns, 10 cards */}
       <div className="game-cards-grid">
         {gameCards.map((game) => (
           <div 
@@ -123,8 +161,6 @@ const GameCardsArea: React.FC = () => {
             {/* Badge */}
             {game.badge && (
               <span className={`card-badge ${game.badge.type}`}>
-                {game.badge.type === 'hot' && '🔥 '}
-                {game.badge.type === 'new' && '✨ '}
                 {game.badge.text}
               </span>
             )}
@@ -135,7 +171,9 @@ const GameCardsArea: React.FC = () => {
             )}
 
             {/* Game Title */}
-            <h3 className="card-title">{game.name}</h3>
+            <h3 className={`card-title ${game.darkText ? 'dark-text' : ''}`}>
+              {game.name}
+            </h3>
 
             {/* Character */}
             <div className="card-character">

@@ -129,7 +129,7 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(180deg, #FFD1DC 0%, #FFF0F5 100%);
+  background: linear-gradient(180deg, #FFCDD9 0%, #FFE4EC 50%, #FFF5F7 100%);
   overflow: hidden;
   transition: background-color var(--transition-slow);
   padding-top: var(--app-container-top-padding);
@@ -138,9 +138,9 @@ body {
   -webkit-touch-callout: none;
 }
 
-/* Light theme adjustments */
+/* Light theme adjustments - Pink gradient background */
 .app-container.light-theme {
-  background: linear-gradient(180deg, #FFD1DC 0%, #FFF0F5 100%);
+  background: linear-gradient(180deg, #FFCDD9 0%, #FFE4EC 50%, #FFF5F7 100%);
 }
 
 /* Global Touch Feedback */

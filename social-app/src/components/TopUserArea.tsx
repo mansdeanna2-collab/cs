@@ -18,18 +18,28 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
 }) => {
   return (
     <div className="top-user-area">
-      {/* Festival Decorations */}
+      {/* Festival Decorations - Vector style */}
       <div className="festival-decorations">
         <div className="decoration-lights">
-          <span className="light light-1">💡</span>
-          <span className="light light-2">✨</span>
-          <span className="light light-3">💡</span>
-          <span className="light light-4">⭐</span>
-          <span className="light light-5">💡</span>
-          <span className="ribbon ribbon-1">🎀</span>
-          <span className="ribbon ribbon-2">🎗️</span>
-          <span className="star star-1">⭐</span>
-          <span className="star star-2">🌟</span>
+          {/* Hanging light bulbs with lines */}
+          <div className="hanging-light light-pos-1">
+            <div className="light-wire"></div>
+            <div className="light-bulb"></div>
+          </div>
+          <div className="sparkle-star sparkle-pos-1"></div>
+          <div className="ribbon-bow ribbon-pos-1"></div>
+          <div className="sparkle-star small sparkle-pos-2"></div>
+          <div className="hanging-light light-pos-2">
+            <div className="light-wire"></div>
+            <div className="light-bulb"></div>
+          </div>
+          <div className="vine-decoration vine-pos-1"></div>
+          <div className="sparkle-star double sparkle-pos-3"></div>
+          <div className="ribbon-bow small ribbon-pos-2"></div>
+          <div className="hanging-light light-pos-3">
+            <div className="light-wire"></div>
+            <div className="light-bulb"></div>
+          </div>
         </div>
       </div>
 
@@ -61,28 +71,43 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
         <div className="mascot-container">
           <div className="mascot-stage">
             <div className="stage-arch">
-              <div className="arch-lights">
-                <span className="arch-light">💡</span>
-                <span className="arch-light">💡</span>
-                <span className="arch-light">💡</span>
+              <div className="arch-lights-row">
+                <span className="arch-bulb"></span>
+                <span className="arch-bulb"></span>
+                <span className="arch-bulb"></span>
+                <span className="arch-bulb"></span>
+                <span className="arch-bulb"></span>
               </div>
             </div>
             <div className="mascot-figure">
               <div className="mascot-hat">
-                <span className="hat-candle">🕯️</span>
+                <div className="hat-candle-holder">
+                  <div className="candle-flame"></div>
+                  <div className="candle-body"></div>
+                </div>
                 <span className="hat-number">12</span>
               </div>
               <div className="mascot-body">
                 <div className="mascot-face-area">
-                  <span className="mascot-eyes">◠‿◠</span>
+                  <div className="mascot-blush left"></div>
+                  <div className="mascot-eyes-container">
+                    <span className="mascot-eye left">︶</span>
+                    <span className="mascot-eye right">︶</span>
+                  </div>
+                  <div className="mascot-blush right"></div>
+                  <div className="mascot-smile"></div>
                 </div>
-                <span className="mascot-wave">👋</span>
+                <div className="mascot-arm wave">
+                  <div className="arm-shape"></div>
+                </div>
               </div>
             </div>
             {/* Interaction Elements */}
-            <span className="mascot-heart heart-1">❤️</span>
-            <span className="mascot-heart heart-2">💕</span>
-            <span className="mascot-bubble">💬</span>
+            <div className="floating-heart heart-1"></div>
+            <div className="floating-heart heart-2"></div>
+            <div className="chat-bubble">
+              <span className="bubble-dots">...</span>
+            </div>
           </div>
         </div>
 
@@ -92,6 +117,7 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
             <span className="activity-icon">🎁</span>
             <span className="activity-text">活动</span>
             <span className="activity-glow"></span>
+            <span className="activity-star"></span>
           </button>
         </div>
       </div>
