@@ -1,27 +1,27 @@
 /* GameCardsArea.css - Game Cards Area Layout Styles */
 
 .game-cards-area {
-  padding: 0 16px;
-  margin-top: 8px;
+  padding: 0 12px;
+  margin-top: 4px;
 }
 
-/* Top Banner Card (Height 180pt) */
+/* Top Banner Card (Height 140pt - smaller) */
 .banner-card {
   position: relative;
   width: 100%;
-  height: 180px;
-  border-radius: 16px;
+  height: 140px;
+  border-radius: 14px;
   background: linear-gradient(135deg, #2D1B4E 0%, #1A1028 50%, #3D2066 100%);
   overflow: hidden;
   cursor: pointer;
-  margin-bottom: 12px;
-  box-shadow: 0 8px 24px rgba(45, 27, 78, 0.4);
+  margin-bottom: 10px;
+  box-shadow: 0 6px 20px rgba(45, 27, 78, 0.4);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .banner-card:hover {
   transform: translateY(-3px);
-  box-shadow: 0 12px 32px rgba(45, 27, 78, 0.5);
+  box-shadow: 0 10px 28px rgba(45, 27, 78, 0.5);
 }
 
 .banner-card:active {
@@ -39,18 +39,18 @@
 /* Bunting/Flags */
 .banner-bunting {
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 18px;
+  gap: 14px;
   z-index: 2;
 }
 
 .bunting-flag {
-  width: 15px;
-  height: 20px;
+  width: 12px;
+  height: 16px;
   clip-path: polygon(0 0, 100% 0, 50% 100%);
   animation: swingFlag 2s ease-in-out infinite;
 }
@@ -77,11 +77,11 @@
 }
 
 .banner-bulb {
-  width: 8px;
-  height: 10px;
+  width: 6px;
+  height: 8px;
   background: #FFD700;
   border-radius: 50% 50% 50% 50%;
-  box-shadow: 0 0 8px 3px rgba(255, 215, 0, 0.6);
+  box-shadow: 0 0 6px 2px rgba(255, 215, 0, 0.6);
   animation: bulbGlowAlt 1.5s ease-in-out infinite;
 }
 
@@ -98,11 +98,11 @@
 /* Card Table Scene */
 .card-table-scene {
   position: absolute;
-  bottom: 35px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
-  width: 250px;
-  height: 70px;
+  width: 200px;
+  height: 55px;
 }
 
 .poker-table {
@@ -110,60 +110,60 @@
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 200px;
-  height: 50px;
+  width: 160px;
+  height: 40px;
   background: linear-gradient(180deg, #2E7D32 0%, #1B5E20 100%);
-  border-radius: 100px / 30px;
-  border: 3px solid #8B4513;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  border-radius: 80px / 25px;
+  border: 2px solid #8B4513;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
 }
 
 .scattered-cards {
   position: absolute;
-  top: 10px;
+  top: 8px;
   left: 50%;
   transform: translateX(-50%);
-  width: 100px;
-  height: 40px;
+  width: 80px;
+  height: 32px;
 }
 
 .playing-card {
   position: absolute;
-  width: 25px;
-  height: 35px;
+  width: 20px;
+  height: 28px;
   background: #FFFFFF;
-  border-radius: 3px;
+  border-radius: 2px;
   border: 1px solid #DDD;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .playing-card::before {
   content: '♠';
   position: absolute;
-  top: 3px;
-  left: 3px;
-  font-size: 10px;
+  top: 2px;
+  left: 2px;
+  font-size: 8px;
   color: #000;
 }
 
-.card-1 { left: 20px; transform: rotate(-15deg); }
+.card-1 { left: 18px; transform: rotate(-15deg); }
 .card-1::before { content: '♠'; color: #000; }
 
-.card-2 { left: 35px; top: 5px; transform: rotate(5deg); }
+.card-2 { left: 30px; top: 4px; transform: rotate(5deg); }
 .card-2::before { content: '♥'; color: #E53935; }
 
-.card-3 { left: 50px; transform: rotate(20deg); }
+.card-3 { left: 42px; transform: rotate(20deg); }
 .card-3::before { content: '♦'; color: #E53935; }
 
 /* Pig Characters */
 .pig-characters {
   position: absolute;
-  bottom: 40px;
+  bottom: 32px;
   left: 0;
   right: 0;
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 12px;
   z-index: 4;
 }
 
@@ -175,23 +175,23 @@
 }
 
 .pig-char .char-body {
-  font-size: 36px;
-  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.3));
+  font-size: 28px;
+  filter: drop-shadow(0 3px 5px rgba(0, 0, 0, 0.3));
   animation: pigBounce 2s ease-in-out infinite;
 }
 
 .tiger .char-body { animation-delay: 0s; }
-.pink-pig .char-body { font-size: 38px; animation-delay: 0.2s; }
-.white-pig .char-body { font-size: 40px; animation-delay: 0.4s; }
+.pink-pig .char-body { font-size: 30px; animation-delay: 0.2s; }
+.white-pig .char-body { font-size: 32px; animation-delay: 0.4s; }
 .brown-pig .char-body { animation-delay: 0.6s; }
-.boss-pig .char-body { font-size: 42px; animation-delay: 0.8s; }
+.boss-pig .char-body { font-size: 34px; animation-delay: 0.8s; }
 
 .boss-pig .sunglasses {
   position: absolute;
-  top: -5px;
+  top: -4px;
   left: 50%;
   transform: translateX(-50%);
-  font-size: 20px;
+  font-size: 16px;
 }
 
 @keyframes pigBounce {
@@ -201,18 +201,18 @@
 
 .banner-content {
   position: absolute;
-  bottom: 16px;
-  left: 16px;
+  bottom: 12px;
+  left: 14px;
   z-index: 5;
 }
 
 .banner-title {
   font-family: 'Noto Sans SC', sans-serif;
-  font-size: 28px;
+  font-size: 22px;
   font-weight: 800;
   color: #FFFFFF;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 215, 0, 0.3);
-  margin-bottom: 8px;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.4), 0 0 16px rgba(255, 215, 0, 0.3);
+  margin-bottom: 6px;
   letter-spacing: 0.02em;
   background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
   -webkit-background-clip: text;
@@ -224,50 +224,50 @@
 .banner-subtitle {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
   background: rgba(0, 0, 0, 0.5);
   backdrop-filter: blur(8px);
-  padding: 6px 12px;
-  border-radius: 14px;
-  width: 180px;
-  height: 28px;
+  padding: 5px 10px;
+  border-radius: 12px;
+  width: 165px;
+  height: 24px;
 }
 
 .subtitle-text {
-  font-size: 12px;
+  font-size: 11px;
   color: rgba(255, 255, 255, 0.9);
   font-weight: 500;
 }
 
 .subtitle-arrow {
-  font-size: 16px;
+  font-size: 14px;
   color: rgba(255, 255, 255, 0.8);
   font-weight: 600;
 }
 
-/* Game Cards Grid - 2 columns */
+/* Game Cards Grid - 2 columns with 3 rows visible (6 cards) */
 .game-cards-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 8px;
 }
 
-/* Individual Game Card (174pt x 110pt) */
+/* Individual Game Card (smaller - 85pt height) */
 .game-card-item {
   position: relative;
   width: 100%;
-  height: 110px;
-  border-radius: 14px;
-  padding: 12px;
+  height: 85px;
+  border-radius: 12px;
+  padding: 10px;
   cursor: pointer;
   overflow: hidden;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .game-card-item:hover {
-  transform: translateY(-3px) scale(1.02);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .game-card-item:active {
@@ -277,16 +277,16 @@
 /* Card Badge */
 .card-badge {
   position: absolute;
-  top: 8px;
-  left: 8px;
-  padding: 3px 8px;
+  top: 6px;
+  left: 6px;
+  padding: 2px 6px;
   border-radius: 4px;
-  font-size: 10px;
+  font-size: 9px;
   font-weight: 700;
   z-index: 3;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-  min-width: 40px;
-  height: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  min-width: 36px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -305,23 +305,23 @@
 .card-badge.special {
   background: linear-gradient(135deg, #8B5CF6 0%, #7C3AED 100%);
   color: #FFFFFF;
-  width: 55px;
+  width: 50px;
 }
 
 /* Card Countdown */
 .card-countdown {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 3px 8px;
-  border-radius: 8px;
-  font-size: 10px;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  border-radius: 6px;
+  font-size: 9px;
   font-weight: 600;
   background: rgba(0, 0, 0, 0.5);
   color: #FFFFFF;
   backdrop-filter: blur(4px);
-  width: 50px;
-  height: 20px;
+  width: 42px;
+  height: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -330,13 +330,13 @@
 /* Card Title */
 .card-title {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
+  bottom: 10px;
+  left: 10px;
   font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;
-  font-size: 18px;
+  font-size: 14px;
   font-weight: 700;
   color: #FFFFFF;
-  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   z-index: 2;
   letter-spacing: 0.01em;
 }
@@ -350,42 +350,42 @@
 /* Card Character */
 .card-character {
   position: absolute;
-  bottom: 8px;
-  right: 12px;
+  bottom: 6px;
+  right: 10px;
   z-index: 2;
 }
 
 .character-emoji {
-  font-size: 50px;
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.25));
+  font-size: 38px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.25));
   transition: transform 0.3s ease;
 }
 
 .game-card-item:hover .character-emoji {
-  transform: scale(1.1) rotate(5deg);
+  transform: scale(1.08) rotate(5deg);
 }
 
 /* Card Promo Badge */
 .card-promo {
   position: absolute;
-  bottom: 8px;
-  right: 8px;
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 9px;
+  bottom: 6px;
+  right: 6px;
+  padding: 3px 6px;
+  border-radius: 5px;
+  font-size: 8px;
   font-weight: 700;
   background: linear-gradient(135deg, #3B82F6 0%, #1D4ED8 100%);
   color: #FFFFFF;
-  box-shadow: 0 2px 6px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 2px 4px rgba(59, 130, 246, 0.4);
   z-index: 4;
   transform: rotate(-15deg);
-  width: 60px;
-  height: 50px;
+  width: 50px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
-  line-height: 1.2;
+  line-height: 1.1;
 }
 
 /* Card Decorations */
@@ -400,18 +400,18 @@
 
 .deco-star {
   position: absolute;
-  top: 30%;
-  right: 40%;
-  font-size: 12px;
+  top: 25%;
+  right: 38%;
+  font-size: 10px;
   opacity: 0.6;
   animation: twinkle 2s ease-in-out infinite;
 }
 
 .deco-sparkle {
   position: absolute;
-  top: 20%;
-  right: 25%;
-  font-size: 10px;
+  top: 18%;
+  right: 22%;
+  font-size: 8px;
   opacity: 0.5;
   animation: twinkle 2s ease-in-out infinite 0.5s;
 }
@@ -452,36 +452,36 @@
   bottom: 0;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(0, 0, 0, 0.2) 100%);
   pointer-events: none;
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 /* Responsive adjustments */
 @media (max-width: 360px) {
   .game-cards-area {
-    padding: 0 12px;
+    padding: 0 10px;
   }
   
   .banner-card {
-    height: 160px;
+    height: 120px;
   }
   
   .banner-title {
-    font-size: 22px;
+    font-size: 18px;
   }
   
   .game-card-item {
-    height: 100px;
+    height: 75px;
   }
   
   .character-emoji {
-    font-size: 40px;
+    font-size: 32px;
   }
   
   .card-title {
-    font-size: 14px;
+    font-size: 12px;
   }
   
   .pig-char .char-body {
-    font-size: 28px;
+    font-size: 22px;
   }
 }

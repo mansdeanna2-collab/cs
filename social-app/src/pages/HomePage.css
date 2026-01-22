@@ -1,5 +1,5 @@
 .home-page {
-  padding-bottom: 110px;
+  padding-bottom: 100px;
   padding-top: 0;
   background: transparent;
   min-height: 100vh;
@@ -178,32 +178,32 @@
   100% { transform: translateX(-50%); }
 }
 
-/* Quick Actions - 5 Icons (Height 90pt) */
+/* Quick Actions - 5 Icons (Height 70pt - compact) */
 .quick-actions {
   display: flex;
   justify-content: space-around;
-  padding: 12px 20px;
-  height: 90px;
-  gap: 8px;
+  padding: 8px 16px;
+  height: 70px;
+  gap: 6px;
 }
 
 .action-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
+  gap: 5px;
   cursor: pointer;
   transition: all var(--transition-normal);
   position: relative;
-  width: 70px;
+  width: 60px;
 }
 
 .action-item:hover {
-  transform: translateY(-4px);
+  transform: translateY(-3px);
 }
 
 .action-item:active {
-  transform: translateY(-2px) scale(0.95);
+  transform: translateY(-1px) scale(0.95);
 }
 
 .action-item.action-with-badge {
@@ -212,28 +212,28 @@
 
 .action-badge-new {
   position: absolute;
-  top: -4px;
-  right: 8px;
-  padding: 2px 6px;
+  top: -3px;
+  right: 5px;
+  padding: 1px 5px;
   background: linear-gradient(135deg, #EF4444 0%, #DC2626 100%);
   color: #FFFFFF;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 700;
-  border-radius: 8px;
+  border-radius: 6px;
   z-index: 3;
   box-shadow: 0 2px 6px rgba(239, 68, 68, 0.4);
   animation: pulse 2s ease-in-out infinite;
-  width: 28px;
-  height: 16px;
+  width: 24px;
+  height: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
 .action-icon-wrapper {
-  width: 48px;
-  height: 48px;
-  border-radius: 12px;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -242,7 +242,7 @@
 }
 
 .action-icon-wrapper .action-icon {
-  font-size: 24px;
+  font-size: 20px;
   width: auto;
   height: auto;
   background: none;
@@ -251,14 +251,14 @@
 }
 
 .action-icon-wrapper .action-icon-text {
-  font-size: 24px;
+  font-size: 20px;
   font-weight: 900;
   color: #FFFFFF;
 }
 
 /* Card icon for 游玩卡 */
 .action-icon-wrapper .action-icon-card {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 800;
   color: #FFFFFF;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
@@ -284,10 +284,10 @@
 .action-icon-blue-purple::before {
   content: '';
   position: absolute;
-  width: 28px;
-  height: 36px;
+  width: 22px;
+  height: 28px;
   background: rgba(255, 255, 255, 0.15);
-  border-radius: 4px;
+  border-radius: 3px;
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
@@ -307,29 +307,29 @@
 
 .action-item:hover .action-icon-wrapper {
   transform: scale(1.08);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.2);
 }
 
 .action-text {
-  font-size: 12px;
+  font-size: 10px;
   color: #666666;
   font-weight: 500;
   letter-spacing: 0.01em;
   text-align: center;
 }
 
-/* Content Title Bar (Height 50pt) */
+/* Content Title Bar (Height 40pt - compact) */
 .content-title-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-  height: 50px;
+  padding: 6px 14px;
+  height: 40px;
 }
 
 .content-title {
   font-family: 'PingFang SC', 'Noto Sans SC', sans-serif;
-  font-size: 20px;
+  font-size: 17px;
   font-weight: 600;
   color: #333333;
 }
@@ -337,23 +337,23 @@
 .room-button {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 5px;
+  padding: 6px 10px;
   background: #FFFFFF;
   border: 1px solid #E5E5E5;
-  border-radius: 17px;
+  border-radius: 14px;
   cursor: pointer;
   transition: all 0.25s ease;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  width: 95px;
-  height: 34px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  width: 85px;
+  height: 28px;
 }
 
 .room-button:hover {
   background: #F9FAFB;
   border-color: #D1D5DB;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
 }
 
 .room-button:active {
@@ -361,11 +361,11 @@
 }
 
 .room-icon {
-  font-size: 16px;
+  font-size: 13px;
 }
 
 .room-text {
-  font-size: 13px;
+  font-size: 11px;
   color: #666666;
   font-weight: 500;
 }

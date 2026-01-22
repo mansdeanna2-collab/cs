@@ -18,7 +18,6 @@ const navItems: NavItem[] = [
   { id: 'home', icon: '🏠', activeIcon: '🏡', label: '首页' },
   { id: 'party', icon: '🎉', activeIcon: '🎊', label: '派对' },
   { id: 'messages', icon: '💬', activeIcon: '💭', label: '消息', badge: 5 },
-  { id: 'discover', icon: '🧭', activeIcon: '🧭', label: '发现' },
   { id: 'profile', icon: '👤', activeIcon: '👨', label: '我的' },
 ];
 
