@@ -84,7 +84,7 @@
   --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Layout */
-  --app-container-top-padding: 12px;
+  --app-container-top-padding: 0px;
   
   /* Layout - Responsive */
   --container-max-width: min(100vw, 430px);

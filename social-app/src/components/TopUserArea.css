@@ -9,6 +9,25 @@
   overflow: visible;
 }
 
+/* Simplified layout - no decorations, more compact */
+.top-user-area.simplified {
+  height: 90px;
+  padding: 8px 20px;
+}
+
+.top-user-area.simplified .top-user-content {
+  padding-top: 0;
+  height: 100%;
+}
+
+.top-user-area.simplified .top-user-content.simplified {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 100%;
+  padding-top: 0;
+}
+
 /* Festival Decorations - Vector Style (30pt height) */
 .festival-decorations {
   position: absolute;

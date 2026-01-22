@@ -17,34 +17,9 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
   }
 }) => {
   return (
-    <div className="top-user-area">
-      {/* Festival Decorations - Vector style */}
-      <div className="festival-decorations">
-        <div className="decoration-lights">
-          {/* Hanging light bulbs with lines */}
-          <div className="hanging-light light-pos-1">
-            <div className="light-wire"></div>
-            <div className="light-bulb"></div>
-          </div>
-          <div className="sparkle-star sparkle-pos-1"></div>
-          <div className="ribbon-bow ribbon-pos-1"></div>
-          <div className="sparkle-star small sparkle-pos-2"></div>
-          <div className="hanging-light light-pos-2">
-            <div className="light-wire"></div>
-            <div className="light-bulb"></div>
-          </div>
-          <div className="vine-decoration vine-pos-1"></div>
-          <div className="sparkle-star double sparkle-pos-3"></div>
-          <div className="ribbon-bow small ribbon-pos-2"></div>
-          <div className="hanging-light light-pos-3">
-            <div className="light-wire"></div>
-            <div className="light-bulb"></div>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <div className="top-user-content">
+    <div className="top-user-area simplified">
+      {/* Main Content - Simplified Layout */}
+      <div className="top-user-content simplified">
         {/* Left: User Info Group */}
         <div className="user-info-group">
           {/* Avatar */}
@@ -63,50 +38,6 @@ const TopUserArea: React.FC<TopUserAreaProps> = ({
               <span className="currency-icon">🏆</span>
               <span className="currency-value">{user.coins}</span>
               <button className="recharge-btn" aria-label="充值">+</button>
-            </div>
-          </div>
-        </div>
-
-        {/* Center: Mascot */}
-        <div className="mascot-container">
-          <div className="mascot-stage">
-            <div className="stage-arch">
-              <div className="arch-lights-row">
-                <span className="arch-bulb"></span>
-                <span className="arch-bulb"></span>
-                <span className="arch-bulb"></span>
-                <span className="arch-bulb"></span>
-                <span className="arch-bulb"></span>
-              </div>
-            </div>
-            <div className="mascot-figure">
-              <div className="mascot-hat">
-                <div className="hat-candle-holder">
-                  <div className="candle-flame"></div>
-                  <div className="candle-body"></div>
-                </div>
-                <span className="hat-number">12</span>
-              </div>
-              <div className="mascot-body">
-                <div className="mascot-face-area">
-                  <div className="mascot-blush left"></div>
-                  <div className="mascot-eyes-container">
-                    <span className="mascot-eye left">︶</span>
-                    <span className="mascot-eye right">︶</span>
-                  </div>
-                  <div className="mascot-blush right"></div>
-                  <div className="mascot-smile"></div>
-                </div>
-                <div className="mascot-arm wave">
-                  <div className="arm-shape"></div>
-                </div>
-              </div>
-            </div>
-            {/* Interaction Elements */}
-            <div className="floating-heart heart-1"></div>
-            <div className="floating-heart heart-2"></div>
-            <div className="chat-bubble">
-              <span className="bubble-dots">...</span>
             </div>
           </div>
         </div>

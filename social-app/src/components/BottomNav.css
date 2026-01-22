@@ -5,15 +5,17 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: var(--container-max-width);
-  height: 83px; /* 49pt nav + 34pt safe area */
-  background: #FFFFFF;
+  height: 75px; /* Slightly more compact */
+  background: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   display: flex;
   justify-content: space-around;
   align-items: flex-start;
-  padding: 8px 16px 34px; /* 34px bottom for safe area */
-  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 10px 24px 28px; /* More horizontal padding for 4 items */
+  border-top: 1px solid rgba(0, 0, 0, 0.04);
   z-index: 1000;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
   transition: all 0.25s ease;
 }
 
@@ -26,11 +28,11 @@
   gap: 4px;
   background: transparent;
   border: none;
-  padding: 4px 12px;
+  padding: 6px 16px;
   cursor: pointer;
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  border-radius: 8px;
-  min-width: 56px;
+  border-radius: 12px;
+  min-width: 64px;
   outline: none;
   -webkit-tap-highlight-color: transparent;
 }
