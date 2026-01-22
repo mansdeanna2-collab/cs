@@ -274,11 +274,6 @@ const HomePage: React.FC = () => {
           <button className="load-more-btn">加载更多动态...</button>
         </div>
       </section>
-
-      {/* Floating Action Button */}
-      <button className="fab">
-        <span className="fab-icon">✏️</span>
-      </button>
     </div>
   );
 };
