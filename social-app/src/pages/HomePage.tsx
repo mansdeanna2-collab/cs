@@ -141,8 +141,9 @@ const HomePage: React.FC = () => {
 
       setVideoCategories(displayCategories);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '未知错误';
       console.error('加载视频失败 (Failed to load videos):', err);
-      setError('加载视频失败，请稍后重试');
+      setError(`加载视频失败: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -178,8 +179,9 @@ const HomePage: React.FC = () => {
         videos: displayVideos
       }]);
     } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : '未知错误';
       console.error('搜索失败 (Search failed):', err);
-      setError('搜索失败，请稍后重试');
+      setError(`搜索失败: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -198,10 +200,17 @@ const HomePage: React.FC = () => {
 
   // 处理视频点击 (Handle video click)
   const handleVideoClick = async (videoId: number) => {
-    // 增加播放次数 (Increment play count)
-    await updatePlayCount(videoId);
-    // TODO: 实现视频播放功能 (Implement video playback)
-    console.log('Playing video:', videoId);
+    try {
+      // 增加播放次数 (Increment play count)
+      const success = await updatePlayCount(videoId);
+      if (!success) {
+        console.warn('更新播放次数失败 (Failed to update play count):', videoId);
+      }
+      // TODO: 实现视频播放功能 (Implement video playback)
+      console.log('Playing video:', videoId);
+    } catch (err) {
+      console.error('处理视频点击失败 (Failed to handle video click):', err);
+    }
   };
 
   return (
