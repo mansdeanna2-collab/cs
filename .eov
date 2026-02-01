@@ -1,0 +1,20 @@
+# ================================================
+# EOV (Environment Override Variables) 配置文件
+# ================================================
+# 此文件用于集中管理API配置，方便统一修改
+# This file is used for centralized API configuration management
+# 
+# 修改此文件中的API_BASE_URL后，APK和Web应用都会自动使用新地址
+# After modifying API_BASE_URL in this file, both APK and Web apps will use the new address
+# ================================================
+
+# API服务器基础地址 (API Server Base URL)
+# 格式: http://IP地址:端口 或 https://域名
+# Format: http://IP:PORT or https://DOMAIN
+API_BASE_URL=http://103.74.193.179:5000
+
+# API版本 (API Version) - 可选配置
+# API_VERSION=v1
+
+# API超时时间(毫秒) (API Timeout in milliseconds) - 可选配置
+# API_TIMEOUT=30000
