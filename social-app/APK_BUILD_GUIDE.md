@@ -49,7 +49,7 @@ docker --version
 
 ### 开发环境
 
-1. **Node.js** 18.0+ 
+1. **Node.js** 20.0+ 
 2. **npm** 9.0+
 3. **Android Studio** (最新版本)
 4. **JDK 21+**
@@ -57,7 +57,7 @@ docker --version
 ### 检查环境
 
 ```bash
-node --version    # v18.0.0+
+node --version    # v20.0.0+
 npm --version     # 9.0.0+
 java --version    # 21+
 ```
