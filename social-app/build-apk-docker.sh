@@ -89,11 +89,17 @@ echo ""
 # =============================================================================
 
 echo "🚀 开始在 Docker 容器中构建 APK..."
+echo "📂 挂载源代码目录: $(pwd)"
 echo ""
 
+# 获取当前目录作为源代码目录
+SOURCE_DIR="$(pwd)"
+
 docker run --rm \
+    -v "$SOURCE_DIR:/app/source:ro" \
     -v "$OUTPUT_DIR:/app/output" \
     -v social-app-gradle-cache:/root/.gradle \
+    -v social-app-node-modules:/app/node_modules \
     --name "${IMAGE_NAME}-running" \
     $IMAGE_NAME $MODE
 
@@ -124,7 +130,8 @@ else
     echo "   1. 检查 Docker 日志获取详细错误信息"
     echo "   2. 尝试强制重新构建镜像: ./build-apk-docker.sh $MODE --rebuild"
     echo "   3. 清理 Gradle 缓存: docker volume rm social-app-gradle-cache"
-    echo "   4. 查看完整文档: APK_DOCKER_BUILD_GUIDE.md"
+    echo "   4. 清理 node_modules 缓存: docker volume rm social-app-node-modules"
+    echo "   5. 查看完整文档: APK_DOCKER_BUILD_GUIDE.md"
     echo "════════════════════════════════════════════════════════════"
     exit 1
 fi

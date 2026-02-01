@@ -4,7 +4,9 @@
 # =============================================================================
 # 使用方法:
 #   docker build -f Dockerfile.apk-builder -t social-app-apk-builder .
-#   docker run -v $(pwd)/output:/app/output social-app-apk-builder [debug|release]
+#   docker run -v $(pwd):/app/source:ro -v $(pwd)/output:/app/output social-app-apk-builder [debug|release]
+#
+# 注意: 源代码通过卷挂载传入，确保每次构建都使用最新代码
 # =============================================================================
 
 FROM ubuntu:24.04
@@ -36,6 +38,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     wget \
     unzip \
     git \
+    rsync \
     ca-certificates \
     gnupg \
     # Java JDK 21 (required by Capacitor Android)
@@ -89,17 +92,11 @@ RUN ${ANDROID_HOME}/cmdline-tools/latest/bin/sdkmanager --update \
 # =============================================================================
 WORKDIR /app
 
-# 复制 package 文件并安装依赖
-# 注意: 使用 npm install 以允许添加 Capacitor 依赖
-COPY package*.json ./
-RUN npm install --silent \
-    && npm install @capacitor/core @capacitor/cli @capacitor/android --save
-
-# 复制源代码
-COPY . .
-
 # 创建输出目录
 RUN mkdir -p /app/output
+
+# 注意: 源代码不再复制到镜像中，而是在运行时通过卷挂载
+# 这确保每次构建都使用最新的源代码
 
 # =============================================================================
 # 构建入口脚本
@@ -120,6 +117,46 @@ echo "📦 构建模式: $MODE"
 echo "📍 Android SDK: $ANDROID_HOME"
 echo "☕ Java: $(java --version 2>&1 | head -1)"
 echo "📗 Node.js: $(node --version)"
+echo ""
+
+# =============================================================================
+# 复制源代码 (从挂载的卷复制到工作目录，确保使用最新代码)
+# =============================================================================
+SOURCE_MOUNT="/app/source"
+if [ -d "$SOURCE_MOUNT" ]; then
+    echo "📂 复制最新源代码..."
+    # 复制源代码文件 (排除 node_modules, build, android 构建产物)
+    rsync -a --exclude='node_modules' --exclude='build' --exclude='dist' \
+          --exclude='android/.gradle' --exclude='android/app/build' --exclude='android/build' \
+          --exclude='.git' --exclude='output' --exclude='*.apk' \
+          "$SOURCE_MOUNT/" /app/
+    if [ $? -ne 0 ]; then
+        echo "❌ 源代码复制失败！"
+        exit 1
+    fi
+    echo "✅ 源代码已复制"
+else
+    echo "⚠️  未找到源代码挂载目录 $SOURCE_MOUNT，使用镜像内置代码"
+fi
+echo ""
+
+# =============================================================================
+# 安装依赖 (源代码通过卷挂载，每次构建都需要安装依赖)
+# =============================================================================
+echo "📦 安装依赖..."
+npm install --quiet
+if [ $? -ne 0 ]; then
+    echo "❌ npm install 失败！"
+    exit 1
+fi
+
+# 安装 Capacitor 依赖
+npm install @capacitor/core @capacitor/cli @capacitor/android --quiet
+if [ $? -ne 0 ]; then
+    echo "❌ Capacitor 依赖安装失败！"
+    exit 1
+fi
+echo "✅ 依赖安装完成"
 echo ""
 
 # 检查是否需要初始化 Capacitor
