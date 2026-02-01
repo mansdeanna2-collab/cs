@@ -258,11 +258,11 @@ echo "🔧 检查 AndroidManifest.xml 配置..."
 MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
 if [ -f "$MANIFEST_PATH" ]; then
     # 检查是否缺少 android:exported 属性 (Android 12+ 要求)
-    if grep -q '<activity' "$MANIFEST_PATH" && ! grep -q 'android:exported=' "$MANIFEST_PATH"; then
-        echo "   添加 android:exported 属性..."
-        # 使用 sed 在 MainActivity 中添加 exported="true"
-        sed -i 's/<activity\s*$/<activity\n            android:exported="true"/g' "$MANIFEST_PATH"
-        sed -i 's/<activity\([^>]*\)android:name="\([^"]*MainActivity[^"]*\)"/<activity\1android:exported="true"\n            android:name="\2"/g' "$MANIFEST_PATH"
+    # 注意: Capacitor 生成的 AndroidManifest.xml 通常已经包含此属性
+    # 只有在确实缺少时才添加，避免重复
+    if grep -q '<activity.*android:name=".MainActivity"' "$MANIFEST_PATH" && ! grep -q 'android:exported=' "$MANIFEST_PATH"; then
+        echo "   警告: AndroidManifest.xml 缺少 android:exported 属性"
+        echo "   请手动检查并添加 android:exported=\"true\" 到 MainActivity"
     fi
     echo "✅ AndroidManifest.xml 配置检查完成"
 else
@@ -279,12 +279,12 @@ VARIABLES_PATH="android/variables.gradle"
 if [ -f "$VARIABLES_PATH" ]; then
     # 将 compileSdkVersion 35 改为 34
     if grep -q 'compileSdkVersion = 35' "$VARIABLES_PATH"; then
-        sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/g' "$VARIABLES_PATH"
+        sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/' "$VARIABLES_PATH"
         echo "   已将 compileSdkVersion 从 35 更新为 34"
     fi
     # 将 targetSdkVersion 35 改为 34
     if grep -q 'targetSdkVersion = 35' "$VARIABLES_PATH"; then
-        sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/g' "$VARIABLES_PATH"
+        sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/' "$VARIABLES_PATH"
         echo "   已将 targetSdkVersion 从 35 更新为 34"
     fi
     echo "✅ variables.gradle SDK 版本检查完成"

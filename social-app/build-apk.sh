@@ -628,12 +628,12 @@ KOTLIN_FIX
     if [ -f "android/variables.gradle" ]; then
         # 将 compileSdkVersion 35 改为 34
         if grep -q 'compileSdkVersion = 35' "android/variables.gradle"; then
-            sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/g' "android/variables.gradle"
+            sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/' "android/variables.gradle"
             echo "   已将 compileSdkVersion 从 35 更新为 34"
         fi
         # 将 targetSdkVersion 35 改为 34
         if grep -q 'targetSdkVersion = 35' "android/variables.gradle"; then
-            sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/g' "android/variables.gradle"
+            sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/' "android/variables.gradle"
             echo "   已将 targetSdkVersion 从 35 更新为 34"
         fi
     fi
