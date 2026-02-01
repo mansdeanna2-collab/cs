@@ -20,7 +20,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # 设置 Android SDK 环境变量
 ENV ANDROID_HOME=/opt/android-sdk
 ENV ANDROID_SDK_ROOT=/opt/android-sdk
-ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/34.0.0"
+ENV PATH="${PATH}:${ANDROID_HOME}/cmdline-tools/latest/bin:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/build-tools/35.0.0"
 
 # 设置 Java 环境变量
 ENV JAVA_HOME=/usr/lib/jvm/java-21-openjdk-amd64
@@ -66,8 +66,8 @@ RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
 # =============================================================================
 # 使用最新稳定版本的命令行工具
 ARG CMDLINE_TOOLS_VERSION=11076708
-ARG BUILD_TOOLS_VERSION=34.0.0
-ARG PLATFORM_VERSION=android-34
+ARG BUILD_TOOLS_VERSION=35.0.0
+ARG PLATFORM_VERSION=android-35
 
 WORKDIR ${ANDROID_HOME}/cmdline-tools
 RUN wget -q https://dl.google.com/android/repository/commandlinetools-linux-${CMDLINE_TOOLS_VERSION}_latest.zip -O cmdline-tools.zip \
@@ -245,8 +245,8 @@ android {
     defaultConfig {
         // 最低支持 Android 6.0 (API 23)，确保广泛兼容性
         minSdkVersion 23
-        // 目标 Android 14 (API 34)
-        targetSdkVersion 34
+        // 目标 Android API 35 (满足 AndroidX 依赖要求)
+        targetSdkVersion 35
         // 版本号
         versionCode 1
         versionName "1.0.0"
@@ -307,24 +307,17 @@ else
 fi
 
 # =============================================================================
-# 修复 variables.gradle SDK 版本
-# 确保使用稳定的 Android 34 而不是较新的 Android 35
+# 检查 variables.gradle SDK 版本
+# 确保使用 Android SDK 35 以满足 AndroidX 依赖要求
 # =============================================================================
 echo ""
 echo "🔧 检查 variables.gradle SDK 版本..."
 VARIABLES_PATH="android/variables.gradle"
 if [ -f "$VARIABLES_PATH" ]; then
-    # 将 compileSdkVersion 35 改为 34
-    if grep -q 'compileSdkVersion = 35' "$VARIABLES_PATH"; then
-        sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/' "$VARIABLES_PATH"
-        echo "   已将 compileSdkVersion 从 35 更新为 34"
-    fi
-    # 将 targetSdkVersion 35 改为 34
-    if grep -q 'targetSdkVersion = 35' "$VARIABLES_PATH"; then
-        sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/' "$VARIABLES_PATH"
-        echo "   已将 targetSdkVersion 从 35 更新为 34"
-    fi
-    echo "✅ variables.gradle SDK 版本检查完成"
+    # 显示当前 SDK 版本配置
+    echo "   当前 SDK 版本配置:"
+    grep -E 'compileSdkVersion|targetSdkVersion|minSdkVersion' "$VARIABLES_PATH" | sed 's/^/   /'
+    echo "✅ variables.gradle SDK 版本检查完成 (使用 Android SDK 35)"
 fi
 
 # 构建 Web 应用
