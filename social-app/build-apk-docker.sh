@@ -97,14 +97,15 @@ SOURCE_DIR="$(pwd)"
 
 # 获取父目录中的 eov 文件路径
 PARENT_EOV_FILE="$(dirname "$SOURCE_DIR")/eov"
-EOV_MOUNT=""
+EOV_FILE=""
 if [ -f "$PARENT_EOV_FILE" ]; then
     echo "📝 发现 eov 配置文件: $PARENT_EOV_FILE"
-    EOV_MOUNT="-v $PARENT_EOV_FILE:/app/eov:ro"
+    EOV_FILE="$PARENT_EOV_FILE"
 else
     # 检查当前目录是否有 eov 文件
     if [ -f "$SOURCE_DIR/eov" ]; then
         echo "📝 发现 eov 配置文件: $SOURCE_DIR/eov"
+        EOV_FILE="$SOURCE_DIR/eov"
     else
         echo "⚠️  警告: 未找到 eov 配置文件"
         echo "   请在项目根目录或父目录创建 eov 文件"
@@ -112,15 +113,26 @@ else
 fi
 echo ""
 
-# Note: $EOV_MOUNT is intentionally unquoted so it expands to nothing when empty
-docker run --rm \
-    -v "$SOURCE_DIR:/app/source:ro" \
-    -v "$OUTPUT_DIR:/app/output" \
-    -v social-app-gradle-cache:/root/.gradle \
-    -v social-app-node-modules:/app/node_modules \
-    ${EOV_MOUNT:+"$EOV_MOUNT"} \
-    --name "${IMAGE_NAME}-running" \
-    $IMAGE_NAME $MODE
+# Build the docker run command with proper argument handling
+# Note: EOV volume mount is added as separate -v argument when file exists
+if [ -n "$EOV_FILE" ]; then
+    docker run --rm \
+        -v "$SOURCE_DIR:/app/source:ro" \
+        -v "$OUTPUT_DIR:/app/output" \
+        -v social-app-gradle-cache:/root/.gradle \
+        -v social-app-node-modules:/app/node_modules \
+        -v "$EOV_FILE:/app/eov:ro" \
+        --name "${IMAGE_NAME}-running" \
+        $IMAGE_NAME $MODE
+else
+    docker run --rm \
+        -v "$SOURCE_DIR:/app/source:ro" \
+        -v "$OUTPUT_DIR:/app/output" \
+        -v social-app-gradle-cache:/root/.gradle \
+        -v social-app-node-modules:/app/node_modules \
+        --name "${IMAGE_NAME}-running" \
+        $IMAGE_NAME $MODE
+fi
 
 BUILD_RESULT=$?
 
