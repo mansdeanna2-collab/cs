@@ -83,14 +83,15 @@ export const ErrorCodes = {
 
 /**
  * 获取用户友好的错误消息 (Get user-friendly error message)
+ * Bilingual messages: Chinese / English
  */
 function getErrorMessage(code: string): string {
   const messages: Record<string, string> = {
-    [ErrorCodes.NETWORK_ERROR]: '网络连接失败，请检查网络设置',
-    [ErrorCodes.TIMEOUT_ERROR]: '请求超时，请稍后重试',
-    [ErrorCodes.SERVER_ERROR]: '服务器错误，请稍后重试',
-    [ErrorCodes.PARSE_ERROR]: '数据解析失败',
-    [ErrorCodes.UNKNOWN_ERROR]: '未知错误，请稍后重试',
+    [ErrorCodes.NETWORK_ERROR]: '网络连接失败 / Network connection failed',
+    [ErrorCodes.TIMEOUT_ERROR]: '请求超时 / Request timeout',
+    [ErrorCodes.SERVER_ERROR]: '服务器错误 / Server error',
+    [ErrorCodes.PARSE_ERROR]: '数据解析失败 / Data parse error',
+    [ErrorCodes.UNKNOWN_ERROR]: '未知错误 / Unknown error',
   };
   return messages[code] || messages[ErrorCodes.UNKNOWN_ERROR];
 }
@@ -133,8 +134,9 @@ async function apiRequest<T>(
       try {
         const errorData = await response.json();
         errorMessage = errorData.message || errorMessage;
-      } catch {
-        // 无法解析错误响应，使用默认消息
+      } catch (parseError) {
+        // 无法解析错误响应，使用默认消息 (Cannot parse error response, use default message)
+        console.warn('[API] Failed to parse error response:', parseError);
       }
       console.error(`[API] 服务器错误 (Server error): ${response.status} - ${errorMessage}`);
       throw new ApiError(
@@ -147,10 +149,11 @@ async function apiRequest<T>(
 
     const data = await response.json();
     
-    // 验证API响应格式 (Validate API response format)
-    if (typeof data !== 'object' || data === null) {
+    // 验证API响应格式 - 确保返回的是对象或数组
+    // Validate API response format - ensure it's an object or array
+    if (data === null || (typeof data !== 'object')) {
       throw new ApiError(
-        '无效的API响应格式',
+        '无效的API响应格式 / Invalid API response format',
         ErrorCodes.PARSE_ERROR,
         response.status,
         url
