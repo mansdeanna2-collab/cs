@@ -125,10 +125,10 @@ def handle_errors(f: F) -> F:
         try:
             return f(*args, **kwargs)
         except ValueError as e:
-            logger.warning(f"参数错误 (Parameter error): {e}")
+            logger.warning("参数错误 (Parameter error): %s", e)
             return api_response(message=str(e), code=400)
         except Exception as e:
-            logger.error(f"服务器错误 (Server error): {e}", exc_info=True)
+            logger.error("服务器错误 (Server error): %s", e, exc_info=True)
             return api_response(message="服务器内部错误", code=500)
     return cast(F, decorated_function)
 
@@ -169,8 +169,7 @@ def get_video(video_id: int) -> Tuple[Response, int]:
 
     if video:
         return api_response(data=video)
-    else:
-        return api_response(message="视频不存在", code=404)
+    return api_response(message="视频不存在", code=404)
 
 
 @app.route('/api/videos/search', methods=['GET'])
@@ -216,7 +215,9 @@ def get_videos_by_category() -> Tuple[Response, int]:
     offset: int = max(int(request.args.get('offset', 0)), 0)
 
     with get_db() as db:
-        videos: List[Dict[str, Any]] = db.get_videos_by_category(category, limit=limit, offset=offset)
+        videos: List[Dict[str, Any]] = db.get_videos_by_category(
+            category, limit=limit, offset=offset
+        )
 
     return api_response(data=videos)
 
@@ -247,8 +248,7 @@ def update_play_count(video_id: int) -> Tuple[Response, int]:
 
     if success:
         return api_response(message="播放次数已更新")
-    else:
-        return api_response(message="视频不存在", code=404)
+    return api_response(message="视频不存在", code=404)
 
 
 @app.route('/api/categories', methods=['GET'])
@@ -274,19 +274,19 @@ def get_statistics() -> Tuple[Response, int]:
 # ==================== 错误处理 (Error Handlers) ====================
 
 @app.errorhandler(404)
-def not_found(e: Exception) -> Tuple[Response, int]:
+def not_found(_: Exception) -> Tuple[Response, int]:
     """404 错误处理 (404 error handler)"""
     return api_response(message="接口不存在", code=404)
 
 
 @app.errorhandler(405)
-def method_not_allowed(e: Exception) -> Tuple[Response, int]:
+def method_not_allowed(_: Exception) -> Tuple[Response, int]:
     """405 错误处理 (405 error handler)"""
     return api_response(message="方法不允许", code=405)
 
 
 @app.errorhandler(500)
-def internal_error(e: Exception) -> Tuple[Response, int]:
+def internal_error(_: Exception) -> Tuple[Response, int]:
     """500 错误处理 (500 error handler)"""
     return api_response(message="服务器内部错误", code=500)
 
