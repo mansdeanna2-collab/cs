@@ -1,13 +1,13 @@
-/* Global Styles - Mobile-first Social Entertainment App */
+/* Global Styles - Mobile-first Video Platform App */
 /* Import Google Fonts with font-display: swap for better performance */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;600;700;900&display=swap');
 
 :root {
   /* Core Colors */
-  --primary-color: #6C63FF;
-  --primary-light: #8B85FF;
-  --primary-dark: #5B54D6;
+  --primary-color: #FF4757;
+  --primary-light: #FF6B7A;
+  --primary-dark: #E83E4C;
   --secondary-color: #FF6B9D;
   --secondary-light: #FF8FB8;
   --accent-color: #00D9FF;
@@ -26,26 +26,26 @@
   --indigo-500: #6366F1;
   --teal-500: #14B8A6;
   
-  /* Light Theme (Default) */
-  --bg-primary: #F8FAFC;
-  --bg-secondary: #FFFFFF;
-  --bg-tertiary: #F1F5F9;
-  --bg-card: #E2E8F0;
-  --bg-elevated: #FFFFFF;
-  --header-bg: #FFFFFF;
+  /* Dark Theme (Default for Video Platform) */
+  --bg-primary: #0D0D0D;
+  --bg-secondary: #1A1A1A;
+  --bg-tertiary: #252525;
+  --bg-card: #2A2A2A;
+  --bg-elevated: #333333;
+  --header-bg: #0D0D0D;
   
-  --text-primary: #1E293B;
-  --text-secondary: #475569;
-  --text-muted: #94A3B8;
+  --text-primary: #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --text-muted: #666666;
   
   /* Gradients */
-  --gradient-primary: linear-gradient(135deg, #6C63FF 0%, #FF6B9D 100%);
+  --gradient-primary: linear-gradient(135deg, #FF4757 0%, #FF6B9D 100%);
   --gradient-secondary: linear-gradient(135deg, #00D9FF 0%, #6C63FF 100%);
   --gradient-tertiary: linear-gradient(135deg, #8B5CF6 0%, #EC4899 100%);
-  --gradient-game: linear-gradient(180deg, rgba(108, 99, 255, 0.8) 0%, rgba(255, 107, 157, 0.6) 100%);
-  --gradient-glow: linear-gradient(135deg, rgba(108, 99, 255, 0.4) 0%, rgba(255, 107, 157, 0.4) 100%);
-  --gradient-nav: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%);
-  --gradient-announcement: linear-gradient(90deg, #6C63FF 0%, #FF6B9D 50%, #00D9FF 100%);
+  --gradient-game: linear-gradient(180deg, rgba(255, 71, 87, 0.8) 0%, rgba(255, 107, 157, 0.6) 100%);
+  --gradient-glow: linear-gradient(135deg, rgba(255, 71, 87, 0.4) 0%, rgba(255, 107, 157, 0.4) 100%);
+  --gradient-nav: linear-gradient(180deg, rgba(13, 13, 13, 0.98) 0%, rgba(26, 26, 26, 0.95) 100%);
+  --gradient-announcement: linear-gradient(90deg, #FF4757 0%, #FF6B9D 50%, #00D9FF 100%);
   
   /* Enhanced Shadows for Light Theme */
   --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
@@ -129,7 +129,7 @@ body {
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  background: linear-gradient(180deg, #FFCDD9 0%, #FFE4EC 50%, #FFF5F7 100%);
+  background: var(--bg-primary);
   overflow: hidden;
   transition: background-color var(--transition-slow);
   padding-top: var(--app-container-top-padding);
@@ -138,9 +138,9 @@ body {
   -webkit-touch-callout: none;
 }
 
-/* Light theme adjustments - Pink gradient background */
+/* Dark theme adjustments - Black gradient background */
 .app-container.light-theme {
-  background: linear-gradient(180deg, #FFCDD9 0%, #FFE4EC 50%, #FFF5F7 100%);
+  background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 50%, #0D0D0D 100%);
 }
 
 /* Global Touch Feedback */

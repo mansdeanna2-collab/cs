@@ -1,207 +1,193 @@
 import React, { useState } from 'react';
 import './HomePage.css';
-import TopUserArea from '../components/TopUserArea';
-import GameCardsArea from '../components/GameCardsArea';
 
-interface Post {
+interface Video {
   id: number;
-  user: {
-    name: string;
-    avatar: string;
-    level: number;
-    isVip?: boolean;
-  };
-  content: string;
-  images?: string[];
-  likes: number;
-  comments: number;
-  time: string;
-  isLiked?: boolean;
+  title: string;
+  thumbnail: string;
+  views: string;
+  duration: string;
 }
 
-const posts: Post[] = [
+interface VideoCategory {
+  id: number;
+  name: string;
+  videos: Video[];
+}
+
+const categories = ['推荐', '国产', '日本', '动漫', '福利'];
+
+const bannerItems = [
+  { id: 1, title: '热门推荐', image: '🎬', color: '#FF4757' },
+  { id: 2, title: '新片上线', image: '🌟', color: '#FF6B9D' },
+  { id: 3, title: '精选合集', image: '💎', color: '#6C63FF' },
+];
+
+const videoCategories: VideoCategory[] = [
   {
     id: 1,
-    user: { name: '小明星✨', avatar: '👦', level: 28, isVip: true },
-    content: '今晚狼人杀超刺激！连续三把都是狼人，每次都被投出去😂 有没有带带我的大佬！',
-    images: ['🎮', '🐺', '😈'],
-    likes: 256,
-    comments: 48,
-    time: '10分钟前',
-    isLiked: true
+    name: '搞笑',
+    videos: [
+      { id: 1, title: '爆笑喜剧精选合集', thumbnail: '😂', views: '128万', duration: '15:32' },
+      { id: 2, title: '沙雕日常第一季', thumbnail: '🤣', views: '89万', duration: '08:45' },
+      { id: 3, title: '搞笑配音系列', thumbnail: '😆', views: '56万', duration: '12:20' },
+      { id: 4, title: '整蛊大合集', thumbnail: '🤭', views: '42万', duration: '18:55' },
+      { id: 5, title: '神级吐槽精选', thumbnail: '😏', views: '35万', duration: '10:15' },
+    ],
   },
   {
     id: 2,
-    user: { name: '音乐小精灵', avatar: '👧', level: 35 },
-    content: '刚刚在K歌房唱了一首《起风了》，被大家夸唱得好听，开心！今晚继续开麦，欢迎来玩~',
-    likes: 189,
-    comments: 32,
-    time: '25分钟前'
+    name: '剧情',
+    videos: [
+      { id: 6, title: '都市爱情故事', thumbnail: '💕', views: '256万', duration: '45:30' },
+      { id: 7, title: '悬疑推理剧场', thumbnail: '🔍', views: '198万', duration: '38:20' },
+      { id: 8, title: '青春校园系列', thumbnail: '🎓', views: '145万', duration: '28:45' },
+      { id: 9, title: '家庭温情剧', thumbnail: '👨‍👩‍👧', views: '112万', duration: '52:10' },
+      { id: 10, title: '职场励志故事', thumbnail: '💼', views: '87万', duration: '35:25' },
+    ],
   },
   {
     id: 3,
-    user: { name: '游戏达人', avatar: '🧑', level: 42, isVip: true },
-    content: '新版本你画我猜太好玩了！终于有人能猜出我画的"抽象派"作品了哈哈哈',
-    images: ['🎨', '✏️'],
-    likes: 342,
-    comments: 67,
-    time: '1小时前',
-    isLiked: false
+    name: '动作',
+    videos: [
+      { id: 11, title: '武打精彩片段', thumbnail: '🥋', views: '312万', duration: '22:15' },
+      { id: 12, title: '追车戏合集', thumbnail: '🚗', views: '245万', duration: '18:30' },
+      { id: 13, title: '格斗比赛集锦', thumbnail: '🥊', views: '189万', duration: '25:40' },
+      { id: 14, title: '特技表演精选', thumbnail: '🎪', views: '156万', duration: '15:55' },
+      { id: 15, title: '战争场面剪辑', thumbnail: '⚔️', views: '123万', duration: '32:10' },
+    ],
   },
-  {
-    id: 4,
-    user: { name: '派对女王', avatar: '👩', level: 55 },
-    content: '周末派对预告：本周六晚8点，大型相亲派对等你来！已有200+小伙伴报名，不见不散！🎉',
-    likes: 528,
-    comments: 156,
-    time: '2小时前'
-  },
-  {
-    id: 5,
-    user: { name: '夜猫子', avatar: '🦉', level: 18 },
-    content: '凌晨3点还在玩谁是卧底，我是真的上头了...明天还要早起，但是停不下来啊！',
-    likes: 95,
-    comments: 23,
-    time: '3小时前'
-  }
 ];
 
 const HomePage: React.FC = () => {
-  const [likedPosts, setLikedPosts] = useState<Set<number>>(new Set([1]));
+  const [activeCategory, setActiveCategory] = useState('推荐');
+  const [currentBanner, setCurrentBanner] = useState(0);
 
-  const toggleLike = (postId: number) => {
-    setLikedPosts(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(postId)) {
-        newSet.delete(postId);
-      } else {
-        newSet.add(postId);
-      }
-      return newSet;
-    });
+  const handleRefresh = (categoryId: number) => {
+    // Placeholder for refresh functionality
+    console.log('Refreshing category:', categoryId);
+  };
+
+  const handleViewMore = (categoryId: number) => {
+    // Placeholder for view more functionality
+    console.log('View more for category:', categoryId);
   };
 
   return (
     <div className="home-page">
-      {/* Top User Area */}
-      <TopUserArea />
-
-      {/* Quick Actions - 5 Icons */}
-      <section className="quick-actions">
-        <div className="action-item">
-          <div className="action-icon-wrapper action-icon-black">
-            <span className="action-icon-text">路</span>
-          </div>
-          <span className="action-text">排行榜</span>
+      {/* Header with App Name and Search */}
+      <header className="video-header">
+        <div className="app-logo">
+          <span className="logo-icon">🎬</span>
+          <span className="logo-text">影视</span>
         </div>
-        <div className="action-item">
-          <div className="action-icon-wrapper action-icon-blue-purple">
-            <span className="action-icon-card">8</span>
-          </div>
-          <span className="action-text">游玩卡</span>
+        <div className="search-bar">
+          <span className="search-icon">🔍</span>
+          <input 
+            type="text" 
+            placeholder="搜索视频..." 
+            className="search-input"
+          />
         </div>
-        <div className="action-item action-with-badge">
-          <div className="action-icon-wrapper action-icon-purple">
-            <span className="action-icon">👕</span>
-          </div>
-          <span className="action-badge-new">上新</span>
-          <span className="action-text">会玩秀</span>
-        </div>
-        <div className="action-item">
-          <div className="action-icon-wrapper action-icon-red">
-            <span className="action-icon">🛍️</span>
-          </div>
-          <span className="action-text">商城</span>
-        </div>
-        <div className="action-item">
-          <div className="action-icon-wrapper action-icon-orange">
-            <span className="action-icon">😊</span>
-          </div>
-          <span className="action-text">好友在玩</span>
-        </div>
-      </section>
-
-      {/* Content Title Bar */}
-      <section className="content-title-bar">
-        <h2 className="content-title">一起玩</h2>
-        <button className="room-button">
-          <span className="room-icon">🪟</span>
-          <span className="room-text">桌游房间</span>
+        <button className="header-btn">
+          <span>📋</span>
         </button>
-      </section>
+      </header>
 
-      {/* Game Cards Area - New Design */}
-      <GameCardsArea />
-
-      {/* Divider */}
-      <div className="section-divider">
-        <span className="divider-line"></span>
-        <span className="divider-text">📢 社区动态</span>
-        <span className="divider-line"></span>
-      </div>
-
-      {/* Feed Section */}
-      <section className="feed-section">
-        {posts.map((post) => (
-          <article key={post.id} className="post-card fade-in">
-            <div className="post-header">
-              <div className="user-info">
-                <div className="user-avatar">
-                  <span className="avatar-emoji">{post.user.avatar}</span>
-                  {post.user.isVip && <span className="vip-badge">V</span>}
-                </div>
-                <div className="user-details">
-                  <div className="user-name-row">
-                    <span className="user-name">{post.user.name}</span>
-                    {post.user.isVip && <span className="vip-tag">VIP</span>}
-                  </div>
-                  <div className="user-meta">
-                    <span className="user-level">Lv.{post.user.level}</span>
-                    <span className="post-time">· {post.time}</span>
-                  </div>
-                </div>
-              </div>
-              <button className="post-menu-btn">⋯</button>
-            </div>
-
-            <p className="post-content">{post.content}</p>
-
-            {post.images && (
-              <div className="post-images">
-                {post.images.map((img, idx) => (
-                  <div key={idx} className="image-placeholder">
-                    <span className="placeholder-emoji">{img}</span>
-                  </div>
-                ))}
-              </div>
-            )}
-
-            <div className="post-actions">
-              <button 
-                className={`action-btn like-btn ${likedPosts.has(post.id) ? 'liked' : ''}`}
-                onClick={() => toggleLike(post.id)}
-              >
-                <span className="action-icon-text">{likedPosts.has(post.id) ? '❤️' : '🤍'}</span>
-                <span className="action-count">
-                  {likedPosts.has(post.id) ? post.likes + 1 : post.likes}
-                </span>
-              </button>
-              <button className="action-btn comment-btn">
-                <span className="action-icon-text">💬</span>
-                <span className="action-count">{post.comments}</span>
-              </button>
-              <button className="action-btn share-btn">
-                <span className="action-icon-text">↗️</span>
-                <span className="action-count">分享</span>
-              </button>
-            </div>
-          </article>
+      {/* Category Tabs */}
+      <nav className="category-nav">
+        {categories.map((cat) => (
+          <button
+            key={cat}
+            className={`category-tab ${activeCategory === cat ? 'active' : ''}`}
+            onClick={() => setActiveCategory(cat)}
+          >
+            {cat}
+          </button>
         ))}
+      </nav>
 
-        <div className="load-more">
-          <button className="load-more-btn">加载更多动态...</button>
+      {/* Banner Carousel */}
+      <section className="banner-section">
+        <div className="banner-carousel">
+          {bannerItems.map((banner, index) => (
+            <div 
+              key={banner.id}
+              className={`banner-item ${index === currentBanner ? 'active' : ''}`}
+              style={{ background: `linear-gradient(135deg, ${banner.color} 0%, ${banner.color}88 100%)` }}
+            >
+              <span className="banner-icon">{banner.image}</span>
+              <span className="banner-title">{banner.title}</span>
+            </div>
+          ))}
+        </div>
+        <div className="banner-dots">
+          {bannerItems.map((_, index) => (
+            <span 
+              key={index}
+              className={`dot ${index === currentBanner ? 'active' : ''}`}
+              onClick={() => setCurrentBanner(index)}
+            />
+          ))}
         </div>
       </section>
+
+      {/* Video Categories */}
+      {videoCategories.map((category) => (
+        <section key={category.id} className="video-category">
+          <div className="category-header">
+            <h2 className="category-title">{category.name}</h2>
+          </div>
+          
+          <div className="video-grid">
+            {/* Large Video - First one */}
+            <div className="video-card large">
+              <div className="video-thumbnail">
+                <span className="thumb-emoji">{category.videos[0].thumbnail}</span>
+                <span className="video-duration">{category.videos[0].duration}</span>
+                <div className="play-overlay">
+                  <span className="play-icon">▶</span>
+                </div>
+              </div>
+              <div className="video-info">
+                <h3 className="video-title">{category.videos[0].title}</h3>
+                <span className="video-views">{category.videos[0].views}次播放</span>
+              </div>
+            </div>
+            
+            {/* Small Videos - 2x2 Grid */}
+            <div className="small-videos-grid">
+              {category.videos.slice(1, 5).map((video) => (
+                <div key={video.id} className="video-card small">
+                  <div className="video-thumbnail">
+                    <span className="thumb-emoji">{video.thumbnail}</span>
+                    <span className="video-duration">{video.duration}</span>
+                    <div className="play-overlay">
+                      <span className="play-icon">▶</span>
+                    </div>
+                  </div>
+                  <div className="video-info">
+                    <h3 className="video-title">{video.title}</h3>
+                    <span className="video-views">{video.views}次播放</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="category-actions">
+            <button className="action-btn refresh" onClick={() => handleRefresh(category.id)}>
+              <span className="btn-icon">🔄</span>
+              <span>换一换</span>
+            </button>
+            <button className="action-btn view-more" onClick={() => handleViewMore(category.id)}>
+              <span>查看更多</span>
+              <span className="btn-icon">›</span>
+            </button>
+          </div>
+        </section>
+      ))}
     </div>
   );
 };
