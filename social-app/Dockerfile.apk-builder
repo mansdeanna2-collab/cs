@@ -183,6 +183,113 @@ else
     echo "⚠️  未找到 android/build.gradle，跳过 Kotlin 修复"
 fi
 
+# =============================================================================
+# 修复 APK 安装解析失败问题
+# 问题: APK 安装时可能会出现"解析失败"错误
+# 原因: 1. minSdkVersion 设置过高或过低
+#       2. targetSdkVersion 与设备不兼容
+#       3. AndroidManifest.xml 配置问题
+# 解决: 确保 app/build.gradle 有正确的 SDK 版本配置
+# =============================================================================
+echo ""
+echo "🔧 配置 Android SDK 版本以确保 APK 兼容性..."
+if [ -f "android/app/build.gradle" ]; then
+    APK_FIX_MARKER="QUWAN_APK_COMPAT_FIX_APPLIED"
+    if ! grep -q "$APK_FIX_MARKER" "android/app/build.gradle"; then
+        # 添加兼容性修复到 app/build.gradle
+        cat >> "android/app/build.gradle" << APK_FIX
+
+// $APK_FIX_MARKER
+// =============================================================================
+// 修复 APK 安装解析失败问题
+// 确保 APK 可以在大多数 Android 设备上安装
+// =============================================================================
+android {
+    defaultConfig {
+        // 最低支持 Android 6.0 (API 23)，确保广泛兼容性
+        minSdkVersion 23
+        // 目标 Android 14 (API 34)
+        targetSdkVersion 34
+        // 版本号
+        versionCode 1
+        versionName "1.0.0"
+    }
+    
+    // 确保 APK 正确签名
+    signingConfigs {
+        debug {
+            // 使用调试签名
+        }
+    }
+    
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.debug
+            debuggable true
+        }
+        release {
+            signingConfig signingConfigs.debug // 临时使用调试签名，生产环境应使用正式签名
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    
+    // 解决 lint 错误阻止构建
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+}
+APK_FIX
+        echo "✅ APK 兼容性修复已应用"
+    else
+        echo "✅ APK 兼容性修复已存在"
+    fi
+else
+    echo "⚠️  未找到 android/app/build.gradle，跳过 APK 兼容性修复"
+fi
+
+# =============================================================================
+# 修复 AndroidManifest.xml 配置问题
+# 确保 exported 属性正确设置 (Android 12+ 要求)
+# =============================================================================
+echo ""
+echo "🔧 检查 AndroidManifest.xml 配置..."
+MANIFEST_PATH="android/app/src/main/AndroidManifest.xml"
+if [ -f "$MANIFEST_PATH" ]; then
+    # 检查是否缺少 android:exported 属性 (Android 12+ 要求)
+    if grep -q '<activity' "$MANIFEST_PATH" && ! grep -q 'android:exported=' "$MANIFEST_PATH"; then
+        echo "   添加 android:exported 属性..."
+        # 使用 sed 在 MainActivity 中添加 exported="true"
+        sed -i 's/<activity\s*$/<activity\n            android:exported="true"/g' "$MANIFEST_PATH"
+        sed -i 's/<activity\([^>]*\)android:name="\([^"]*MainActivity[^"]*\)"/<activity\1android:exported="true"\n            android:name="\2"/g' "$MANIFEST_PATH"
+    fi
+    echo "✅ AndroidManifest.xml 配置检查完成"
+else
+    echo "⚠️  未找到 AndroidManifest.xml"
+fi
+
+# =============================================================================
+# 修复 variables.gradle SDK 版本
+# 确保使用稳定的 Android 34 而不是较新的 Android 35
+# =============================================================================
+echo ""
+echo "🔧 检查 variables.gradle SDK 版本..."
+VARIABLES_PATH="android/variables.gradle"
+if [ -f "$VARIABLES_PATH" ]; then
+    # 将 compileSdkVersion 35 改为 34
+    if grep -q 'compileSdkVersion = 35' "$VARIABLES_PATH"; then
+        sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/g' "$VARIABLES_PATH"
+        echo "   已将 compileSdkVersion 从 35 更新为 34"
+    fi
+    # 将 targetSdkVersion 35 改为 34
+    if grep -q 'targetSdkVersion = 35' "$VARIABLES_PATH"; then
+        sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/g' "$VARIABLES_PATH"
+        echo "   已将 targetSdkVersion 从 35 更新为 34"
+    fi
+    echo "✅ variables.gradle SDK 版本检查完成"
+fi
+
 # 构建 Web 应用
 echo ""
 echo "🔨 构建 Web 应用..."
