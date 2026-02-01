@@ -830,6 +830,41 @@ Soul、会玩
 
 ---
 
+## ⚙️ API配置管理 (.eov文件)
+
+项目使用 `.eov` 文件统一管理API配置，方便APK和Web应用的API地址统一修改。
+
+### .eov 文件位置
+
+`.eov` 文件位于项目根目录，用于配置API服务器地址等设置。
+
+### .eov 文件格式
+
+```ini
+# API服务器基础地址 (API Server Base URL)
+API_BASE_URL=http://103.74.193.179:5000
+
+# 可选配置 (Optional configurations)
+# API_VERSION=v1
+# API_TIMEOUT=30000
+```
+
+### 更新API地址
+
+1. 编辑项目根目录的 `.eov` 文件
+2. 修改 `API_BASE_URL` 的值为新的API服务器地址
+3. 重新构建应用
+
+```bash
+# 更新API地址后，重新构建
+cd social-app
+npm run build
+```
+
+修改 `.eov` 文件后，所有使用该配置的应用（Web/APK）都会自动使用新的API地址。
+
+---
+
 <div align="center">
 
 **📧 联系我们 | 💡 建议反馈 | ⭐ Star 支持**

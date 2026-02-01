@@ -3,7 +3,12 @@
  * =================================
  * 提供与后端API服务器通信的功能
  * Provides communication with the backend API server
+ * 
+ * API地址由 .eov 文件统一管理
+ * API address is centrally managed by .eov file
  */
+
+import { getApiBaseUrl as getEovApiBaseUrl, getApiTimeout } from '../config/eov';
 
 // API响应格式接口 (API Response Format Interface)
 export interface ApiResponse<T> {
@@ -40,25 +45,12 @@ export interface Statistics {
 }
 
 // API配置 (API Configuration)
-// 在生产环境中，API服务器和Web应用可能在同一域名下，或者需要配置为实际的API地址
-// In production, the API server and web app may be on the same domain, or configure the actual API address
-const getApiBaseUrl = (): string => {
-  // 检查是否有环境变量配置 (Check if environment variable is configured)
-  if (process.env.REACT_APP_API_URL) {
-    return process.env.REACT_APP_API_URL;
-  }
-  
-  // 开发环境默认使用本地服务器 (Development environment defaults to local server)
-  if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:5000';
-  }
-  
-  // 生产环境使用相对路径或配置的API地址 (Production uses relative path or configured API address)
-  // 这里假设API和Web应用部署在同一个域名下
-  return '';
-};
+// API地址由 .eov 文件统一管理，修改 .eov 文件即可更新所有API请求地址
+// API address is centrally managed by .eov file, modify .eov file to update all API request addresses
+export const API_BASE_URL = getEovApiBaseUrl();
 
-export const API_BASE_URL = getApiBaseUrl();
+// API超时时间 (API Timeout)
+export const API_TIMEOUT = getApiTimeout();
 
 /**
  * 通用API请求函数 (Generic API Request Function)

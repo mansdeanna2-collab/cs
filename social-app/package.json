@@ -21,7 +21,10 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
+    "inject-eov": "node scripts/inject-eov.js",
+    "prestart": "npm run inject-eov",
     "start": "react-scripts start",
+    "prebuild": "npm run inject-eov",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
