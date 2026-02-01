@@ -126,17 +126,25 @@ const config: CapacitorConfig = {
 export default config;
 ```
 
-> ⚠️ **重要说明 (Important Note)**:
+> ⚠️ **重要安全警告 (Critical Security Warning)**:
 > 
+> **以下配置仅适用于开发和测试环境，生产环境必须使用 HTTPS！**
+> **The following configurations are ONLY for development/testing. Production MUST use HTTPS!**
+>
 > 如果您的 API 服务器使用 HTTP（而非 HTTPS），需要配置以下选项：
 > - `cleartext: true` - 允许明文 HTTP 流量
 > - `allowMixedContent: true` - 允许混合内容（HTTPS 页面加载 HTTP 资源）
 > - `allowNavigation` - 允许导航到 HTTP 地址
 >
-> If your API server uses HTTP (not HTTPS), you need to configure:
-> - `cleartext: true` - Allow cleartext HTTP traffic
-> - `allowMixedContent: true` - Allow mixed content (HTTPS page loading HTTP resources)
-> - `allowNavigation` - Allow navigation to HTTP addresses
+> **🔴 安全风险 (Security Risks)**:
+> - 中间人攻击 (Man-in-the-middle attacks)
+> - 数据被窃听和篡改 (Data interception and tampering)
+> - 用户凭证泄露 (Credential leakage)
+>
+> **✅ 生产环境要求 (Production Requirements)**:
+> - 必须使用 HTTPS API 服务器
+> - 移除 `cleartext: true` 和 `allowMixedContent: true` 配置
+> - 配置有效的 SSL 证书
 
 ---
 
@@ -499,7 +507,14 @@ android: {
 <application android:usesCleartextTraffic="true">
 ```
 
-**建议**：生产环境中建议使用 HTTPS 的 API 服务器以提高安全性。
+> 🔴 **安全警告 (Security Warning)**:
+> 
+> 以上配置仅适用于开发/测试环境！HTTP 存在严重的安全风险，包括中间人攻击、数据窃听等。
+> 
+> **生产环境必须**：
+> 1. 将 API 服务器升级为 HTTPS
+> 2. 移除 `cleartext: true` 和 `allowMixedContent: true` 配置
+> 3. 配置有效的 SSL/TLS 证书
 
 ### Q: 应用闪退？
 
