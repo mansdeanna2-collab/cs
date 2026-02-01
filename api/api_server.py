@@ -171,17 +171,22 @@ def transform_videos(videos: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
     return [transform_video(video) for video in videos]
 
 
-def transform_category(category: Dict[str, Any], index: int) -> Dict[str, Any]:
+def transform_category(category: Dict[str, Any]) -> Dict[str, Any]:
     """
     将数据库分类格式转换为API响应格式 (Transform database category format to API response format)
     
     数据库字段 -> API字段:
     - video_category -> name
     - video_count (保持不变)
+    
+    ID is generated from a hash of the category name for stability across API calls.
     """
+    name = category.get('video_category', '')
+    # Use hash of category name to generate stable numeric ID
+    stable_id = abs(hash(name)) % (10 ** 9) if name else 0
     return {
-        'id': index + 1,
-        'name': category.get('video_category', ''),
+        'id': stable_id,
+        'name': name,
         'video_count': category.get('video_count', 0),
     }
 
@@ -190,7 +195,7 @@ def transform_categories(categories: List[Dict[str, Any]]) -> List[Dict[str, Any
     """
     转换分类列表 (Transform category list)
     """
-    return [transform_category(cat, i) for i, cat in enumerate(categories)]
+    return [transform_category(cat) for cat in categories]
 
 
 # ==================== API路由 (API Routes) ====================
