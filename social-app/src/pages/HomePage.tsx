@@ -1,7 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import './HomePage.css';
+import { 
+  Video as ApiVideo, 
+  Category,
+  getVideos, 
+  getCategories,
+  getVideosByCategory,
+  getTopVideos,
+  searchVideos,
+  updatePlayCount 
+} from '../services/api';
 
-interface Video {
+// 显示用的视频接口 (Display video interface)
+interface DisplayVideo {
   id: number;
   title: string;
   thumbnail: string;
@@ -9,68 +20,188 @@ interface Video {
   duration: string;
 }
 
+// 视频分类接口 (Video category interface)
 interface VideoCategory {
   id: number;
   name: string;
-  videos: Video[];
+  videos: DisplayVideo[];
 }
 
-const categories = ['推荐', '国产', '日本', '动漫', '福利'];
+// 默认分类列表 (Default category list)
+const defaultCategories = ['推荐', '热门'];
 
+// Banner项目 (Banner items)
 const bannerItems = [
   { id: 1, title: '热门推荐', image: '🎬', color: '#FF4757' },
   { id: 2, title: '新片上线', image: '🌟', color: '#FF6B9D' },
   { id: 3, title: '精选合集', image: '💎', color: '#6C63FF' },
 ];
 
-const videoCategories: VideoCategory[] = [
-  {
-    id: 1,
-    name: '搞笑',
-    videos: [
-      { id: 1, title: '爆笑喜剧精选合集', thumbnail: '😂', views: '128万', duration: '15:32' },
-      { id: 2, title: '沙雕日常第一季', thumbnail: '🤣', views: '89万', duration: '08:45' },
-      { id: 3, title: '搞笑配音系列', thumbnail: '😆', views: '56万', duration: '12:20' },
-      { id: 4, title: '整蛊大合集', thumbnail: '🤭', views: '42万', duration: '18:55' },
-      { id: 5, title: '神级吐槽精选', thumbnail: '😏', views: '35万', duration: '10:15' },
-    ],
-  },
-  {
-    id: 2,
-    name: '剧情',
-    videos: [
-      { id: 6, title: '都市爱情故事', thumbnail: '💕', views: '256万', duration: '45:30' },
-      { id: 7, title: '悬疑推理剧场', thumbnail: '🔍', views: '198万', duration: '38:20' },
-      { id: 8, title: '青春校园系列', thumbnail: '🎓', views: '145万', duration: '28:45' },
-      { id: 9, title: '家庭温情剧', thumbnail: '👨‍👩‍👧', views: '112万', duration: '52:10' },
-      { id: 10, title: '职场励志故事', thumbnail: '💼', views: '87万', duration: '35:25' },
-    ],
-  },
-  {
-    id: 3,
-    name: '动作',
-    videos: [
-      { id: 11, title: '武打精彩片段', thumbnail: '🥋', views: '312万', duration: '22:15' },
-      { id: 12, title: '追车戏合集', thumbnail: '🚗', views: '245万', duration: '18:30' },
-      { id: 13, title: '格斗比赛集锦', thumbnail: '🥊', views: '189万', duration: '25:40' },
-      { id: 14, title: '特技表演精选', thumbnail: '🎪', views: '156万', duration: '15:55' },
-      { id: 15, title: '战争场面剪辑', thumbnail: '⚔️', views: '123万', duration: '32:10' },
-    ],
-  },
-];
+// 默认缩略图表情映射 (Default thumbnail emoji mapping)
+const categoryEmojis: Record<string, string> = {
+  '搞笑': '😂',
+  '剧情': '💕',
+  '动作': '🥋',
+  '动漫': '🎌',
+  '科幻': '🚀',
+  '恐怖': '👻',
+  '纪录片': '📹',
+  '音乐': '🎵',
+  '默认': '🎬'
+};
+
+/**
+ * 格式化播放次数 (Format play count)
+ */
+const formatPlayCount = (count: number): string => {
+  if (count >= 10000) {
+    return `${(count / 10000).toFixed(1)}万`;
+  }
+  return count.toString();
+};
+
+/**
+ * 获取分类对应的表情 (Get emoji for category)
+ */
+const getCategoryEmoji = (category: string): string => {
+  return categoryEmojis[category] || categoryEmojis['默认'];
+};
+
+/**
+ * 将API视频转换为显示视频 (Convert API video to display video)
+ */
+const convertToDisplayVideo = (video: ApiVideo): DisplayVideo => {
+  return {
+    id: video.id,
+    title: video.title,
+    thumbnail: video.thumbnail || getCategoryEmoji(video.category),
+    views: formatPlayCount(video.play_count),
+    duration: video.duration || '00:00'
+  };
+};
 
 const HomePage: React.FC = () => {
   const [activeCategory, setActiveCategory] = useState('推荐');
   const [currentBanner, setCurrentBanner] = useState(0);
+  const [categories, setCategories] = useState<string[]>(defaultCategories);
+  const [videoCategories, setVideoCategories] = useState<VideoCategory[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [searchKeyword, setSearchKeyword] = useState('');
 
-  const handleRefresh = (categoryId: number) => {
-    // TODO: Implement refresh functionality to fetch new videos for the category
-    console.log('Refreshing category:', categoryId);
+  // 加载分类数据 (Load category data)
+  const loadCategories = useCallback(async () => {
+    try {
+      const apiCategories = await getCategories();
+      if (apiCategories && apiCategories.length > 0) {
+        const categoryNames = ['推荐', ...apiCategories.map((c: Category) => c.name)];
+        setCategories(categoryNames);
+      }
+    } catch (err) {
+      console.error('加载分类失败 (Failed to load categories):', err);
+      // 使用默认分类 (Use default categories)
+    }
+  }, []);
+
+  // 加载视频数据 (Load video data)
+  const loadVideos = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      let videos: ApiVideo[] = [];
+      
+      if (activeCategory === '推荐') {
+        // 获取推荐视频（所有视频） (Get recommended videos - all videos)
+        videos = await getVideos(20, 0);
+      } else if (activeCategory === '热门') {
+        // 获取热门视频 (Get top videos)
+        videos = await getTopVideos(20);
+      } else {
+        // 按分类获取视频 (Get videos by category)
+        videos = await getVideosByCategory(activeCategory, 20, 0);
+      }
+
+      // 将视频按分类分组 (Group videos by category)
+      const groupedVideos = videos.reduce((acc: Record<string, ApiVideo[]>, video: ApiVideo) => {
+        const category = video.category || '其他';
+        if (!acc[category]) {
+          acc[category] = [];
+        }
+        acc[category].push(video);
+        return acc;
+      }, {});
+
+      // 转换为显示格式 (Convert to display format)
+      const displayCategories: VideoCategory[] = Object.entries(groupedVideos).map(([name, vids], index) => ({
+        id: index + 1,
+        name,
+        videos: vids.map(convertToDisplayVideo)
+      }));
+
+      setVideoCategories(displayCategories);
+    } catch (err) {
+      console.error('加载视频失败 (Failed to load videos):', err);
+      setError('加载视频失败，请稍后重试');
+    } finally {
+      setIsLoading(false);
+    }
+  }, [activeCategory]);
+
+  // 初始化加载 (Initialize loading)
+  useEffect(() => {
+    loadCategories();
+  }, [loadCategories]);
+
+  // 当分类变化时重新加载视频 (Reload videos when category changes)
+  useEffect(() => {
+    loadVideos();
+  }, [loadVideos]);
+
+  // 处理搜索 (Handle search)
+  const handleSearch = async () => {
+    if (!searchKeyword.trim()) {
+      loadVideos();
+      return;
+    }
+    
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const videos = await searchVideos(searchKeyword.trim(), 20, 0);
+      const displayVideos = videos.map(convertToDisplayVideo);
+      
+      setVideoCategories([{
+        id: 1,
+        name: `搜索结果: "${searchKeyword}"`,
+        videos: displayVideos
+      }]);
+    } catch (err) {
+      console.error('搜索失败 (Search failed):', err);
+      setError('搜索失败，请稍后重试');
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  // 处理刷新 (Handle refresh)
+  const handleRefresh = (categoryId: number) => {
+    loadVideos();
+  };
+
+  // 处理查看更多 (Handle view more)
   const handleViewMore = (categoryId: number) => {
-    // TODO: Implement navigation to category detail page
+    // TODO: 实现导航到分类详情页 (Implement navigation to category detail page)
     console.log('View more for category:', categoryId);
+  };
+
+  // 处理视频点击 (Handle video click)
+  const handleVideoClick = async (videoId: number) => {
+    // 增加播放次数 (Increment play count)
+    await updatePlayCount(videoId);
+    // TODO: 实现视频播放功能 (Implement video playback)
+    console.log('Playing video:', videoId);
   };
 
   return (
@@ -82,15 +213,18 @@ const HomePage: React.FC = () => {
           <span className="logo-text">影视</span>
         </div>
         <div className="search-bar">
-          <span className="search-icon">🔍</span>
+          <span className="search-icon" onClick={handleSearch}>🔍</span>
           <input 
             type="text" 
             placeholder="搜索视频..." 
             className="search-input"
+            value={searchKeyword}
+            onChange={(e) => setSearchKeyword(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
         </div>
-        <button className="header-btn">
-          <span>📋</span>
+        <button className="header-btn" onClick={() => loadVideos()}>
+          <span>🔄</span>
         </button>
       </header>
 
@@ -100,7 +234,10 @@ const HomePage: React.FC = () => {
           <button
             key={cat}
             className={`category-tab ${activeCategory === cat ? 'active' : ''}`}
-            onClick={() => setActiveCategory(cat)}
+            onClick={() => {
+              setActiveCategory(cat);
+              setSearchKeyword('');
+            }}
           >
             {cat}
           </button>
@@ -132,48 +269,86 @@ const HomePage: React.FC = () => {
         </div>
       </section>
 
+      {/* Loading State */}
+      {isLoading && (
+        <div className="loading-container">
+          <div className="loading-spinner">⏳</div>
+          <span className="loading-text">加载中...</span>
+        </div>
+      )}
+
+      {/* Error State */}
+      {error && !isLoading && (
+        <div className="error-container">
+          <span className="error-icon">⚠️</span>
+          <span className="error-text">{error}</span>
+          <button className="retry-btn" onClick={() => loadVideos()}>
+            重试
+          </button>
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!isLoading && !error && videoCategories.length === 0 && (
+        <div className="empty-container">
+          <span className="empty-icon">📭</span>
+          <span className="empty-text">暂无视频内容</span>
+        </div>
+      )}
+
       {/* Video Categories */}
-      {videoCategories.map((category) => (
+      {!isLoading && !error && videoCategories.map((category) => (
         <section key={category.id} className="video-category">
           <div className="category-header">
             <h2 className="category-title">{category.name}</h2>
           </div>
           
-          <div className="video-grid">
-            {/* Large Video - First one */}
-            <div className="video-card large">
-              <div className="video-thumbnail">
-                <span className="thumb-emoji">{category.videos[0].thumbnail}</span>
-                <span className="video-duration">{category.videos[0].duration}</span>
-                <div className="play-overlay">
-                  <span className="play-icon">▶</span>
+          {category.videos.length > 0 && (
+            <div className="video-grid">
+              {/* Large Video - First one */}
+              <div 
+                className="video-card large"
+                onClick={() => handleVideoClick(category.videos[0].id)}
+              >
+                <div className="video-thumbnail">
+                  <span className="thumb-emoji">{category.videos[0].thumbnail}</span>
+                  <span className="video-duration">{category.videos[0].duration}</span>
+                  <div className="play-overlay">
+                    <span className="play-icon">▶</span>
+                  </div>
+                </div>
+                <div className="video-info">
+                  <h3 className="video-title">{category.videos[0].title}</h3>
+                  <span className="video-views">{category.videos[0].views}次播放</span>
                 </div>
               </div>
-              <div className="video-info">
-                <h3 className="video-title">{category.videos[0].title}</h3>
-                <span className="video-views">{category.videos[0].views}次播放</span>
-              </div>
-            </div>
-            
-            {/* Small Videos - 2x2 Grid */}
-            <div className="small-videos-grid">
-              {category.videos.slice(1, 5).map((video) => (
-                <div key={video.id} className="video-card small">
-                  <div className="video-thumbnail">
-                    <span className="thumb-emoji">{video.thumbnail}</span>
-                    <span className="video-duration">{video.duration}</span>
-                    <div className="play-overlay">
-                      <span className="play-icon">▶</span>
+              
+              {/* Small Videos - 2x2 Grid */}
+              {category.videos.length > 1 && (
+                <div className="small-videos-grid">
+                  {category.videos.slice(1, 5).map((video) => (
+                    <div 
+                      key={video.id} 
+                      className="video-card small"
+                      onClick={() => handleVideoClick(video.id)}
+                    >
+                      <div className="video-thumbnail">
+                        <span className="thumb-emoji">{video.thumbnail}</span>
+                        <span className="video-duration">{video.duration}</span>
+                        <div className="play-overlay">
+                          <span className="play-icon">▶</span>
+                        </div>
+                      </div>
+                      <div className="video-info">
+                        <h3 className="video-title">{video.title}</h3>
+                        <span className="video-views">{video.views}次播放</span>
+                      </div>
                     </div>
-                  </div>
-                  <div className="video-info">
-                    <h3 className="video-title">{video.title}</h3>
-                    <span className="video-views">{video.views}次播放</span>
-                  </div>
+                  ))}
                 </div>
-              ))}
+              )}
             </div>
-          </div>
+          )}
 
           {/* Action Buttons */}
           <div className="category-actions">

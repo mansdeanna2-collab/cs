@@ -1,22 +1,48 @@
 # 影视 - 视频播放平台
 
-一个移动端视频播放应用，采用React + TypeScript构建。
+一个移动端视频播放应用，采用React + TypeScript构建，支持Web和APK构建。
 
 ## 功能特点
 
-- 🎬 **首页** - 视频推荐、分类浏览、轮播图
+- 🎬 **首页** - 视频推荐、分类浏览、轮播图、搜索功能
 - 🌐 **暗网** - 私密内容专区  
 - 📺 **直播** - 直播房间列表
 - 🎮 **游戏** - 游戏中心
 - 👤 **我的** - 个人中心
 
+## API集成
+
+应用通过REST API与后端服务器通信。API服务模块位于 `src/services/api.ts`。
+
+### API端点
+
+- `GET /api/videos` - 获取视频列表（支持分页）
+- `GET /api/videos/<id>` - 获取单个视频详情
+- `GET /api/videos/search` - 搜索视频
+- `GET /api/videos/category` - 按分类获取视频
+- `GET /api/videos/top` - 获取热门视频
+- `POST /api/videos/<id>/play` - 增加播放次数
+- `GET /api/categories` - 获取所有分类
+- `GET /api/statistics` - 获取统计信息
+
+### 配置API地址
+
+1. 复制 `.env.example` 为 `.env.local`
+2. 修改 `REACT_APP_API_URL` 为实际的API服务器地址
+
+```bash
+cp .env.example .env.local
+# 编辑 .env.local 设置 REACT_APP_API_URL
+```
+
 ## 界面特点
 
 - 深色主题设计
 - 5个底部导航标签
-- 视频分类标签（推荐、国产、日本、动漫、福利）
+- 动态视频分类标签（从API加载）
 - 每个分类展示5个视频（1大4小布局）
 - 换一换和查看更多操作
+- 加载状态和错误处理
 
 ## 可用脚本
 
@@ -31,3 +57,20 @@
 ### `npm run build`
 
 构建生产版本到 `build` 文件夹。
+
+## APK构建
+
+应用使用Capacitor支持APK构建，详见 [APK_BUILD_GUIDE.md](./APK_BUILD_GUIDE.md)。
+
+## 开发环境
+
+同时运行Web应用和API服务器：
+
+```bash
+# 终端1: 启动API服务器
+cd ../api
+python api_server.py
+
+# 终端2: 启动Web应用
+npm start
+```
