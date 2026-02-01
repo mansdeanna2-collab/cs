@@ -112,7 +112,12 @@ export function useApi<T>(): UseApiReturn<T> {
     mountedRef.current = true;
     return () => {
       mountedRef.current = false;
-      abortControllerRef.current?.abort();
+      // 仅在卸载时取消请求，不影响正在进行的请求
+      // Only cancel on unmount, don't affect ongoing requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        abortControllerRef.current = null;
+      }
     };
   }, []);
 
@@ -123,17 +128,20 @@ export function useApi<T>(): UseApiReturn<T> {
     async (
       url: string,
       options: RequestInit,
-      timeout: number
+      timeout: number,
+      signal: AbortSignal,
+      isTimeoutAbort: React.MutableRefObject<boolean>
     ): Promise<ApiResponse<T>> => {
-      const controller = new AbortController();
-      abortControllerRef.current = controller;
-
-      const timeoutId = setTimeout(() => controller.abort(), timeout);
+      const timeoutId = setTimeout(() => {
+        // 标记为超时取消 (Mark as timeout abort)
+        isTimeoutAbort.current = true;
+        abortControllerRef.current?.abort();
+      }, timeout);
 
       try {
         const response = await fetch(url, {
           ...options,
-          signal: controller.signal,
+          signal,
           headers: {
             'Content-Type': 'application/json',
             ...options.headers,
@@ -184,9 +192,24 @@ export function useApi<T>(): UseApiReturn<T> {
 
         if (error instanceof Error) {
           if (error.name === 'AbortError') {
-            throw createAppError(ErrorCode.TIMEOUT_ERROR, getErrorMessage(ErrorCode.TIMEOUT_ERROR), {
-              url,
-            });
+            // 如果组件已卸载，返回 null（静默处理）
+            // If component unmounted, return null silently
+            if (!mountedRef.current) {
+              // 返回一个特殊标记，表示请求被取消
+              // Return a special marker indicating request was cancelled
+              return { code: -1, message: 'cancelled', data: null as unknown as T };
+            }
+            
+            // 区分超时和手动取消 (Distinguish timeout vs manual cancel)
+            if (isTimeoutAbort.current) {
+              throw createAppError(ErrorCode.TIMEOUT_ERROR, getErrorMessage(ErrorCode.TIMEOUT_ERROR), {
+                url,
+              });
+            }
+            
+            // 手动取消，返回 null（不显示错误）
+            // Manual cancel, return null (don't show error)
+            return { code: -1, message: 'cancelled', data: null as unknown as T };
           }
 
           if (error.name === 'TypeError' || error.message.includes('fetch')) {
@@ -236,6 +259,18 @@ export function useApi<T>(): UseApiReturn<T> {
         }
       }
 
+      // 取消之前的请求 (Cancel previous request)
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      
+      // 创建新的 AbortController (Create new AbortController)
+      const controller = new AbortController();
+      abortControllerRef.current = controller;
+      
+      // 用于区分超时和手动取消 (Used to distinguish timeout vs manual cancel)
+      const isTimeoutAbort = { current: false };
+
       if (mountedRef.current) {
         setResult({ status: 'loading' });
       }
@@ -244,10 +279,25 @@ export function useApi<T>(): UseApiReturn<T> {
       let attempts = 0;
 
       while (attempts <= maxRetries) {
+        // 检查是否已被取消 (Check if cancelled)
+        if (controller.signal.aborted) {
+          return null;
+        }
+        
+        // 每次重试时重置超时标记 (Reset timeout flag on each retry)
+        isTimeoutAbort.current = false;
+
         try {
           console.log(`[API] 请求 (Request): ${url}${attempts > 0 ? ` (重试 ${attempts})` : ''}`);
 
-          const response = await executeRequest(url, fetchOptions, timeout);
+          const response = await executeRequest(url, fetchOptions, timeout, controller.signal, isTimeoutAbort);
+          
+          // 检查是否被取消（返回了取消标记）
+          // Check if cancelled (returned cancel marker)
+          if (response.code === -1) {
+            return null;
+          }
+          
           const data = response.data;
 
           // 缓存成功响应 (Cache successful response)
@@ -265,6 +315,11 @@ export function useApi<T>(): UseApiReturn<T> {
           lastError = error as AppError;
           attempts++;
 
+          // 如果被取消，不重试 (Don't retry if cancelled)
+          if (controller.signal.aborted) {
+            return null;
+          }
+
           // 如果错误不可重试或已达到最大重试次数，则退出 (Exit if error not retryable or max retries reached)
           if (!lastError.retryable || attempts > maxRetries) {
             break;
@@ -277,10 +332,13 @@ export function useApi<T>(): UseApiReturn<T> {
         }
       }
 
-      console.error(`[API] 失败 (Failed): ${url}`, lastError);
+      // 仅在未被取消时设置错误状态 (Only set error state if not cancelled)
+      if (!controller.signal.aborted) {
+        console.error(`[API] 失败 (Failed): ${url}`, lastError);
 
-      if (mountedRef.current && lastError) {
-        setResult({ status: 'error', error: lastError });
+        if (mountedRef.current && lastError) {
+          setResult({ status: 'error', error: lastError });
+        }
       }
 
       return null;
@@ -302,6 +360,7 @@ export function useApi<T>(): UseApiReturn<T> {
    */
   const cancel = useCallback(() => {
     abortControllerRef.current?.abort();
+    abortControllerRef.current = null;
     if (mountedRef.current) {
       setResult({ status: 'idle' });
     }
