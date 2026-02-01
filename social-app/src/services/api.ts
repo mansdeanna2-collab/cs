@@ -53,6 +53,49 @@ export const API_BASE_URL = getEovApiBaseUrl();
 export const API_TIMEOUT = getApiTimeout();
 
 /**
+ * 自定义API错误类 (Custom API Error Class)
+ * 提供更详细的错误信息用于调试和用户提示
+ */
+export class ApiError extends Error {
+  public code: string;
+  public status?: number;
+  public url?: string;
+
+  constructor(message: string, code: string, status?: number, url?: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.code = code;
+    this.status = status;
+    this.url = url;
+  }
+}
+
+/**
+ * 错误代码常量 (Error Code Constants)
+ */
+export const ErrorCodes = {
+  NETWORK_ERROR: 'NETWORK_ERROR',
+  TIMEOUT_ERROR: 'TIMEOUT_ERROR',
+  SERVER_ERROR: 'SERVER_ERROR',
+  PARSE_ERROR: 'PARSE_ERROR',
+  UNKNOWN_ERROR: 'UNKNOWN_ERROR',
+} as const;
+
+/**
+ * 获取用户友好的错误消息 (Get user-friendly error message)
+ */
+function getErrorMessage(code: string): string {
+  const messages: Record<string, string> = {
+    [ErrorCodes.NETWORK_ERROR]: '网络连接失败，请检查网络设置',
+    [ErrorCodes.TIMEOUT_ERROR]: '请求超时，请稍后重试',
+    [ErrorCodes.SERVER_ERROR]: '服务器错误，请稍后重试',
+    [ErrorCodes.PARSE_ERROR]: '数据解析失败',
+    [ErrorCodes.UNKNOWN_ERROR]: '未知错误，请稍后重试',
+  };
+  return messages[code] || messages[ErrorCodes.UNKNOWN_ERROR];
+}
+
+/**
  * 通用API请求函数 (Generic API Request Function)
  * @param endpoint - API端点路径 (API endpoint path)
  * @param options - fetch选项 (fetch options)
@@ -64,26 +107,98 @@ async function apiRequest<T>(
 ): Promise<ApiResponse<T>> {
   const url = `${API_BASE_URL}${endpoint}`;
   
+  // 创建 AbortController 用于超时控制 (Create AbortController for timeout control)
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), API_TIMEOUT);
+  
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
     },
+    signal: controller.signal,
+    // 添加 mode 和 credentials 配置以支持跨域请求
+    // Add mode and credentials configuration to support cross-origin requests
+    mode: 'cors',
   };
 
   const mergedOptions = { ...defaultOptions, ...options };
 
   try {
+    console.log(`[API] 请求 (Request): ${url}`);
     const response = await fetch(url, mergedOptions);
+    clearTimeout(timeoutId);
     
     if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      let errorMessage = `HTTP ${response.status}`;
+      try {
+        const errorData = await response.json();
+        errorMessage = errorData.message || errorMessage;
+      } catch {
+        // 无法解析错误响应，使用默认消息
+      }
+      console.error(`[API] 服务器错误 (Server error): ${response.status} - ${errorMessage}`);
+      throw new ApiError(
+        errorMessage,
+        ErrorCodes.SERVER_ERROR,
+        response.status,
+        url
+      );
     }
 
-    return await response.json();
+    const data = await response.json();
+    
+    // 验证API响应格式 (Validate API response format)
+    if (typeof data !== 'object' || data === null) {
+      throw new ApiError(
+        '无效的API响应格式',
+        ErrorCodes.PARSE_ERROR,
+        response.status,
+        url
+      );
+    }
+
+    console.log(`[API] 成功 (Success): ${url}`);
+    return data as ApiResponse<T>;
   } catch (error) {
-    console.error('API请求失败 (API request failed):', error);
-    throw error;
+    clearTimeout(timeoutId);
+    
+    // 处理不同类型的错误 (Handle different types of errors)
+    if (error instanceof ApiError) {
+      throw error;
+    }
+    
+    if (error instanceof Error) {
+      // 超时错误 (Timeout error)
+      if (error.name === 'AbortError') {
+        console.error(`[API] 请求超时 (Request timeout): ${url}`);
+        throw new ApiError(
+          getErrorMessage(ErrorCodes.TIMEOUT_ERROR),
+          ErrorCodes.TIMEOUT_ERROR,
+          undefined,
+          url
+        );
+      }
+      
+      // 网络错误 (Network error) - 包括 CORS 错误、连接拒绝等
+      if (error.name === 'TypeError' || error.message.includes('fetch')) {
+        console.error(`[API] 网络错误 (Network error): ${url}`, error.message);
+        throw new ApiError(
+          getErrorMessage(ErrorCodes.NETWORK_ERROR),
+          ErrorCodes.NETWORK_ERROR,
+          undefined,
+          url
+        );
+      }
+    }
+    
+    // 未知错误 (Unknown error)
+    console.error(`[API] 未知错误 (Unknown error): ${url}`, error);
+    throw new ApiError(
+      getErrorMessage(ErrorCodes.UNKNOWN_ERROR),
+      ErrorCodes.UNKNOWN_ERROR,
+      undefined,
+      url
+    );
   }
 }
 
