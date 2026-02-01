@@ -139,7 +139,7 @@ body {
 }
 
 /* Dark theme adjustments - Black gradient background */
-.app-container.light-theme {
+.app-container.dark-theme {
   background: linear-gradient(180deg, #0D0D0D 0%, #1A1A1A 50%, #0D0D0D 100%);
 }
 

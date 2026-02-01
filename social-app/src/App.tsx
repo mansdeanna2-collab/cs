@@ -38,7 +38,7 @@ function App() {
   };
 
   return (
-    <div className="app-container light-theme" onContextMenu={handleContextMenu}>
+    <div className="app-container dark-theme" onContextMenu={handleContextMenu}>
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>

@@ -64,12 +64,12 @@ const HomePage: React.FC = () => {
   const [currentBanner, setCurrentBanner] = useState(0);
 
   const handleRefresh = (categoryId: number) => {
-    // Placeholder for refresh functionality
+    // TODO: Implement refresh functionality to fetch new videos for the category
     console.log('Refreshing category:', categoryId);
   };
 
   const handleViewMore = (categoryId: number) => {
-    // Placeholder for view more functionality
+    // TODO: Implement navigation to category detail page
     console.log('View more for category:', categoryId);
   };
 
