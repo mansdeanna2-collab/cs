@@ -114,12 +114,12 @@ install_nodejs() {
     case $os in
         ubuntu|debian)
             # 使用 NodeSource 安装最新 LTS
-            echo "   使用 NodeSource 安装 Node.js 18.x..."
-            curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - 2>/dev/null
+            echo "   使用 NodeSource 安装 Node.js 20.x..."
+            curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash - 2>/dev/null
             sudo apt-get install -y nodejs 2>/dev/null
             ;;
         centos|rhel|fedora)
-            curl -fsSL https://rpm.nodesource.com/setup_18.x | sudo bash - 2>/dev/null
+            curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo bash - 2>/dev/null
             sudo yum install -y nodejs 2>/dev/null || sudo dnf install -y nodejs 2>/dev/null
             ;;
         macos)
@@ -471,7 +471,7 @@ if [ ${#MISSING_DEPS[@]} -gt 0 ]; then
                     if [ $? -ne 0 ]; then
                         echo ""
                         echo "❌ 无法继续: Node.js 是必需的依赖"
-                        echo "   请手动安装 Node.js 18.x 或更高版本"
+                        echo "   请手动安装 Node.js 20.x 或更高版本"
                         echo "   下载地址: https://nodejs.org/"
                         exit 1
                     fi

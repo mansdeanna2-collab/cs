@@ -314,7 +314,7 @@ docker run -it --rm social-app-apk-builder /bin/bash
 | 组件 | 版本 |
 |------|------|
 | 基础镜像 | Ubuntu 22.04 |
-| Node.js | 18.x LTS |
+| Node.js | 20.x LTS |
 | Java JDK | 21 |
 | Android SDK | 34 |
 | Build Tools | 34.0.0 |
