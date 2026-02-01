@@ -25,11 +25,11 @@
 - `GET /api/categories` - 获取所有分类
 - `GET /api/statistics` - 获取统计信息
 
-### 配置API地址 (推荐方式: .eov文件)
+### 配置API地址 (推荐方式: eov文件)
 
-应用使用项目根目录的 `.eov` 文件统一管理API配置。**修改 `.eov` 文件中的 API_BASE_URL 即可更新所有API请求地址，适用于Web和APK构建。**
+应用使用项目根目录的 `eov` 文件统一管理API配置。**修改 `eov` 文件中的 API_BASE_URL 即可更新所有API请求地址，适用于Web和APK构建。**
 
-#### .eov 文件格式
+#### eov 文件格式
 
 ```ini
 # API服务器基础地址
@@ -42,13 +42,13 @@ API_BASE_URL=http://103.74.193.179:5000
 
 #### 更新API地址步骤
 
-1. 编辑项目根目录的 `.eov` 文件
+1. 编辑项目根目录的 `eov` 文件
 2. 修改 `API_BASE_URL` 的值为新的API服务器地址
 3. 运行 `npm run build` 或 `npm start` 应用新配置
 
 ```bash
 # 示例: 更新API地址
-# 编辑 ../.eov 文件，修改 API_BASE_URL=http://新地址:端口
+# 编辑 ../eov 文件，修改 API_BASE_URL=http://新地址:端口
 
 # 构建应用
 npm run build

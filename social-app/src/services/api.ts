@@ -4,8 +4,8 @@
  * 提供与后端API服务器通信的功能
  * Provides communication with the backend API server
  * 
- * API地址由 .eov 文件统一管理
- * API address is centrally managed by .eov file
+ * API地址由 eov 文件统一管理
+ * API address is centrally managed by eov file
  */
 
 import { getApiBaseUrl as getEovApiBaseUrl, getApiTimeout } from '../config/eov';
@@ -45,8 +45,8 @@ export interface Statistics {
 }
 
 // API配置 (API Configuration)
-// API地址由 .eov 文件统一管理，修改 .eov 文件即可更新所有API请求地址
-// API address is centrally managed by .eov file, modify .eov file to update all API request addresses
+// API地址由 eov 文件统一管理，修改 eov 文件即可更新所有API请求地址
+// API address is centrally managed by eov file, modify eov file to update all API request addresses
 export const API_BASE_URL = getEovApiBaseUrl();
 
 // API超时时间 (API Timeout)
