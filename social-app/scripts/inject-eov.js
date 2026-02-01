@@ -19,7 +19,25 @@ const path = require('path');
 // 获取项目根目录 (Get project root directory)
 const projectRoot = path.resolve(__dirname, '..');
 const repoRoot = path.resolve(projectRoot, '..');
-const eovFilePath = path.join(repoRoot, '.eov');
+
+// .eov 文件搜索路径列表，按优先级排序 (EOV file search paths in priority order)
+// 1. 仓库根目录 (repo root) - 标准位置
+// 2. 项目根目录 (project root) - Docker容器内的备选位置
+const eovSearchPaths = [
+  path.join(repoRoot, '.eov'),     // 标准位置: ../.eov (仓库根目录)
+  path.join(projectRoot, '.eov'),  // 备选位置: ./.eov (项目根目录，用于Docker)
+];
+
+// 查找可用的 .eov 文件 (Find available .eov file)
+function findEovFile() {
+  for (const filePath of eovSearchPaths) {
+    if (fs.existsSync(filePath)) {
+      return filePath;
+    }
+  }
+  return null;
+}
+
 const envLocalPath = path.join(projectRoot, '.env.local');
 
 /**
@@ -110,10 +128,17 @@ function main() {
   console.log('📋 EOV配置注入工具 (EOV Config Injection Tool)');
   console.log('='.repeat(50));
 
+  // 查找.eov文件 (Find .eov file)
+  const eovFilePath = findEovFile();
+  
   // 检查.eov文件是否存在 (Check if .eov file exists)
-  if (!fs.existsSync(eovFilePath)) {
-    console.error(`❌ 错误: .eov 文件不存在于 ${eovFilePath}`);
-    console.error('   请在项目根目录创建 .eov 文件');
+  if (!eovFilePath) {
+    console.error('❌ 错误: 未找到 .eov 文件');
+    console.error('   已搜索以下位置:');
+    for (const searchPath of eovSearchPaths) {
+      console.error(`   - ${searchPath}`);
+    }
+    console.error('   请在项目根目录或仓库根目录创建 .eov 文件');
     process.exit(1);
   }
 
