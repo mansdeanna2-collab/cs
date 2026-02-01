@@ -133,6 +133,66 @@ def handle_errors(f: F) -> F:
     return cast(F, decorated_function)
 
 
+# ==================== 数据转换函数 (Data Transform Functions) ====================
+
+def transform_video(video: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    将数据库视频格式转换为API响应格式 (Transform database video format to API response format)
+    
+    数据库字段 -> API字段:
+    - video_id -> id
+    - video_title -> title
+    - video_image -> thumbnail
+    - video_category -> category
+    - video_duration -> duration
+    - video_url -> url
+    - play_count (保持不变)
+    - upload_time -> created_at
+    - updated_at (保持不变)
+    """
+    return {
+        'id': video.get('video_id'),
+        'title': video.get('video_title', ''),
+        'thumbnail': video.get('video_image', ''),
+        'description': video.get('video_description', ''),
+        'category': video.get('video_category', ''),
+        'play_count': video.get('play_count', 0),
+        'duration': video.get('video_duration', ''),
+        'url': video.get('video_url', ''),
+        'created_at': video.get('upload_time', ''),
+        'updated_at': video.get('updated_at', ''),
+    }
+
+
+def transform_videos(videos: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    转换视频列表 (Transform video list)
+    """
+    return [transform_video(video) for video in videos]
+
+
+def transform_category(category: Dict[str, Any], index: int) -> Dict[str, Any]:
+    """
+    将数据库分类格式转换为API响应格式 (Transform database category format to API response format)
+    
+    数据库字段 -> API字段:
+    - video_category -> name
+    - video_count (保持不变)
+    """
+    return {
+        'id': index + 1,
+        'name': category.get('video_category', ''),
+        'video_count': category.get('video_count', 0),
+    }
+
+
+def transform_categories(categories: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    转换分类列表 (Transform category list)
+    """
+    return [transform_category(cat, i) for i, cat in enumerate(categories)]
+
+
 # ==================== API路由 (API Routes) ====================
 
 @app.route('/api/health', methods=['GET'])
@@ -157,7 +217,7 @@ def get_videos() -> Tuple[Response, int]:
     with get_db() as db:
         videos: List[Dict[str, Any]] = db.get_all_videos(limit=limit, offset=offset)
 
-    return api_response(data=videos)
+    return api_response(data=transform_videos(videos))
 
 
 @app.route('/api/videos/<int:video_id>', methods=['GET'])
@@ -168,7 +228,7 @@ def get_video(video_id: int) -> Tuple[Response, int]:
         video: Optional[Dict[str, Any]] = db.get_video(video_id)
 
     if video:
-        return api_response(data=video)
+        return api_response(data=transform_video(video))
     else:
         return api_response(message="视频不存在", code=404)
 
@@ -194,7 +254,7 @@ def search_videos() -> Tuple[Response, int]:
     with get_db() as db:
         videos: List[Dict[str, Any]] = db.search_videos(keyword, limit=limit, offset=offset)
 
-    return api_response(data=videos)
+    return api_response(data=transform_videos(videos))
 
 
 @app.route('/api/videos/category', methods=['GET'])
@@ -218,7 +278,7 @@ def get_videos_by_category() -> Tuple[Response, int]:
     with get_db() as db:
         videos: List[Dict[str, Any]] = db.get_videos_by_category(category, limit=limit, offset=offset)
 
-    return api_response(data=videos)
+    return api_response(data=transform_videos(videos))
 
 
 @app.route('/api/videos/top', methods=['GET'])
@@ -235,7 +295,7 @@ def get_top_videos() -> Tuple[Response, int]:
     with get_db() as db:
         videos: List[Dict[str, Any]] = db.get_top_videos(limit=limit)
 
-    return api_response(data=videos)
+    return api_response(data=transform_videos(videos))
 
 
 @app.route('/api/videos/<int:video_id>/play', methods=['POST'])
@@ -258,7 +318,7 @@ def get_categories() -> Tuple[Response, int]:
     with get_db() as db:
         categories: List[Dict[str, Any]] = db.get_categories()
 
-    return api_response(data=categories)
+    return api_response(data=transform_categories(categories))
 
 
 @app.route('/api/statistics', methods=['GET'])
