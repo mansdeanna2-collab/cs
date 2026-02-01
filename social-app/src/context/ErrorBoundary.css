@@ -1,0 +1,119 @@
+/* ErrorBoundary 样式 (Error Boundary Styles) */
+
+.error-boundary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: var(--spacing-xl);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.error-boundary-content {
+  text-align: center;
+  max-width: 400px;
+  padding: var(--spacing-xl);
+  background: var(--bg-card);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-lg);
+}
+
+.error-boundary-icon {
+  display: block;
+  font-size: 64px;
+  margin-bottom: var(--spacing-lg);
+  animation: bounce 1s ease-in-out infinite;
+}
+
+.error-boundary-title {
+  font-size: var(--font-size-2xl);
+  font-weight: 700;
+  margin-bottom: var(--spacing-md);
+  color: var(--text-primary);
+}
+
+.error-boundary-message {
+  font-size: var(--font-size-md);
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: var(--spacing-xl);
+}
+
+.error-boundary-details {
+  text-align: left;
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-md);
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius-sm);
+  font-size: var(--font-size-sm);
+}
+
+.error-boundary-details summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
+}
+
+.error-boundary-stack {
+  margin-top: var(--spacing-md);
+  overflow-x: auto;
+}
+
+.error-boundary-stack pre {
+  font-family: 'SF Mono', Consolas, monospace;
+  font-size: var(--font-size-xs);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error-boundary-actions {
+  display: flex;
+  gap: var(--spacing-md);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.error-boundary-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-md) var(--spacing-xl);
+  font-size: var(--font-size-md);
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.error-boundary-btn.primary {
+  background: var(--gradient-primary);
+  color: white;
+}
+
+.error-boundary-btn.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.error-boundary-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+}
+
+.error-boundary-btn.secondary:hover {
+  background: var(--bg-elevated);
+  color: var(--text-primary);
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}

@@ -1,0 +1,126 @@
+/* Loading 样式 (Loading Styles) */
+
+.loading-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-xl);
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-md);
+}
+
+/* 尺寸 (Sizes) */
+.loading-sm .loading-spinner {
+  font-size: 20px;
+}
+
+.loading-sm .loading-text {
+  font-size: var(--font-size-xs);
+}
+
+.loading-md .loading-spinner {
+  font-size: 32px;
+}
+
+.loading-md .loading-text {
+  font-size: var(--font-size-sm);
+}
+
+.loading-lg .loading-spinner {
+  font-size: 48px;
+}
+
+.loading-lg .loading-text {
+  font-size: var(--font-size-md);
+}
+
+/* Spinner */
+.loading-spinner {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+.spinner-icon {
+  display: inline-block;
+}
+
+.loading-text {
+  color: var(--text-secondary);
+}
+
+/* 全屏 (Fullscreen) */
+.loading-fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: var(--bg-primary);
+  z-index: 9999;
+}
+
+/* 覆盖层 (Overlay) */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(13, 13, 13, 0.8);
+  backdrop-filter: blur(2px);
+  z-index: 10;
+}
+
+.loading-overlay-wrapper {
+  position: relative;
+}
+
+/* Skeleton */
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--bg-tertiary) 25%,
+    var(--bg-elevated) 50%,
+    var(--bg-tertiary) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.skeleton-rounded {
+  border-radius: var(--border-radius-sm);
+}
+
+.skeleton-circle {
+  border-radius: var(--border-radius-full);
+}
+
+.skeleton-paragraph {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
