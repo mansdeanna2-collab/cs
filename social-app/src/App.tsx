@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import './styles/global.css';
 import BottomNav from './components/BottomNav';
 import HomePage from './pages/HomePage';
-import PartyPage from './pages/PartyPage';
-import MessagesPage from './pages/MessagesPage';
+import DarkWebPage from './pages/DarkWebPage';
+import LivePage from './pages/LivePage';
+import GamesPage from './pages/GamesPage';
 import ProfilePage from './pages/ProfilePage';
 
 const EDITABLE_SELECTOR = 'input, textarea, [contenteditable="true"]';
@@ -23,12 +24,12 @@ function App() {
     switch (activeTab) {
       case 'home':
         return <HomePage />;
-      case 'party':
-        return <PartyPage />;
-      case 'messages':
-        return <MessagesPage />;
-      case 'discover':
-        return <HomePage />; // Placeholder for discover page
+      case 'darkweb':
+        return <DarkWebPage />;
+      case 'live':
+        return <LivePage />;
+      case 'games':
+        return <GamesPage />;
       case 'profile':
         return <ProfilePage />;
       default:
@@ -37,7 +38,7 @@ function App() {
   };
 
   return (
-    <div className="app-container light-theme" onContextMenu={handleContextMenu}>
+    <div className="app-container dark-theme" onContextMenu={handleContextMenu}>
       {renderPage()}
       <BottomNav activeTab={activeTab} onTabChange={setActiveTab} />
     </div>
