@@ -97,7 +97,18 @@ const config: CapacitorConfig = {
   appName: '趣玩社区',
   webDir: 'build',
   server: {
-    androidScheme: 'https'
+    // Use https scheme for Android (required for modern security)
+    androidScheme: 'https',
+    // Allow cleartext (HTTP) traffic for API calls
+    // This is required when the API server uses HTTP instead of HTTPS
+    cleartext: true,
+    // Allow navigation to HTTP API servers (for mixed content)
+    allowNavigation: ['http://*', 'https://*']
+  },
+  android: {
+    // Allow mixed content (HTTPS page loading HTTP resources)
+    // This is required for API calls to HTTP servers from an HTTPS WebView
+    allowMixedContent: true
   },
   plugins: {
     SplashScreen: {
@@ -114,6 +125,26 @@ const config: CapacitorConfig = {
 
 export default config;
 ```
+
+> ⚠️ **重要安全警告 (Critical Security Warning)**:
+> 
+> **以下配置仅适用于开发和测试环境，生产环境必须使用 HTTPS！**
+> **The following configurations are ONLY for development/testing. Production MUST use HTTPS!**
+>
+> 如果您的 API 服务器使用 HTTP（而非 HTTPS），需要配置以下选项：
+> - `cleartext: true` - 允许明文 HTTP 流量
+> - `allowMixedContent: true` - 允许混合内容（HTTPS 页面加载 HTTP 资源）
+> - `allowNavigation` - 允许导航到 HTTP 地址
+>
+> **🔴 安全风险 (Security Risks)**:
+> - 中间人攻击 (Man-in-the-middle attacks)
+> - 数据被窃听和篡改 (Data interception and tampering)
+> - 用户凭证泄露 (Credential leakage)
+>
+> **✅ 生产环境要求 (Production Requirements)**:
+> - 必须使用 HTTPS API 服务器
+> - 移除 `cleartext: true` 和 `allowMixedContent: true` 配置
+> - 配置有效的 SSL 证书
 
 ---
 
@@ -451,6 +482,39 @@ android {
     }
 }
 ```
+
+### Q: 视频/API加载失败？
+
+如果应用显示"加载视频失败"或 API 请求失败，可能是混合内容问题：
+
+**原因**：Android WebView 使用 HTTPS 方案加载应用，但 API 服务器使用 HTTP。这被称为"混合内容"，默认会被 Android 阻止。
+
+**解决方案**：确保 `capacitor.config.ts` 包含以下配置：
+
+```typescript
+server: {
+  androidScheme: 'https',
+  cleartext: true,                              // 允许 HTTP 流量
+  allowNavigation: ['http://*', 'https://*']   // 允许导航到 HTTP 地址
+},
+android: {
+  allowMixedContent: true  // 允许混合内容
+}
+```
+
+另外，确保 `AndroidManifest.xml` 中包含：
+```xml
+<application android:usesCleartextTraffic="true">
+```
+
+> 🔴 **安全警告 (Security Warning)**:
+> 
+> 以上配置仅适用于开发/测试环境！HTTP 存在严重的安全风险，包括中间人攻击、数据窃听等。
+> 
+> **生产环境必须**：
+> 1. 将 API 服务器升级为 HTTPS
+> 2. 移除 `cleartext: true` 和 `allowMixedContent: true` 配置
+> 3. 配置有效的 SSL/TLS 证书
 
 ### Q: 应用闪退？
 
