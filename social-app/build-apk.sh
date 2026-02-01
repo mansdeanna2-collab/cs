@@ -628,8 +628,13 @@ KOTLIN_FIX
     # 确保使用 Android SDK 35 以满足 AndroidX 依赖要求
     if [ -f "android/variables.gradle" ]; then
         # 显示当前 SDK 版本配置
-        echo "   当前 SDK 版本配置:"
-        grep -E 'compileSdkVersion|targetSdkVersion|minSdkVersion' "android/variables.gradle" | sed 's/^/   /'
+        SDK_CONFIG=$(grep -E 'compileSdkVersion|targetSdkVersion|minSdkVersion' "android/variables.gradle" 2>/dev/null)
+        if [ -n "$SDK_CONFIG" ]; then
+            echo "   当前 SDK 版本配置:"
+            echo "$SDK_CONFIG" | sed 's/^/   /'
+        else
+            echo "   未找到 SDK 版本配置"
+        fi
         echo "✅ variables.gradle SDK 版本检查完成 (使用 Android SDK 35)"
     fi
 }
