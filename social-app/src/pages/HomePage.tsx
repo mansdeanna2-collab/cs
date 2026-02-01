@@ -173,14 +173,24 @@ const HomePage: React.FC = () => {
   // API Hooks
   const videosApi = useApi<Video[]>();
   const categoriesApi = useApi<Category[]>();
+  
+  // Store execute functions in refs to avoid dependency issues
+  // 使用 ref 存储 execute 函数以避免依赖问题
+  const videosExecuteRef = React.useRef(videosApi.execute);
+  const categoriesExecuteRef = React.useRef(categoriesApi.execute);
+  
+  React.useEffect(() => {
+    videosExecuteRef.current = videosApi.execute;
+    categoriesExecuteRef.current = categoriesApi.execute;
+  });
 
   // 加载分类 (Load categories)
   const loadCategories = useCallback(async () => {
-    const data = await categoriesApi.execute('/api/categories', { enableCache: true });
+    const data = await categoriesExecuteRef.current('/api/categories', { enableCache: true });
     if (data && data.length > 0) {
       setCategories(['推荐', ...data.map((c) => c.name)]);
     }
-  }, [categoriesApi]);
+  }, []);
 
   // 加载视频 (Load videos)
   const loadVideos = useCallback(async () => {
@@ -192,11 +202,11 @@ const HomePage: React.FC = () => {
       endpoint = `/api/videos/category?category=${encodeURIComponent(activeCategory)}&limit=20&offset=0`;
     }
 
-    const data = await videosApi.execute(endpoint);
+    const data = await videosExecuteRef.current(endpoint);
     if (data) {
       setVideoCategories(groupVideosByCategory(data));
     }
-  }, [activeCategory, videosApi]);
+  }, [activeCategory]);
 
   // 搜索视频 (Search videos)
   const searchVideos = useCallback(async () => {
@@ -206,7 +216,7 @@ const HomePage: React.FC = () => {
     }
 
     const endpoint = `/api/videos/search?keyword=${encodeURIComponent(debouncedSearchKeyword.trim())}&limit=20&offset=0`;
-    const data = await videosApi.execute(endpoint);
+    const data = await videosExecuteRef.current(endpoint);
 
     if (data) {
       setVideoCategories([{
@@ -215,7 +225,7 @@ const HomePage: React.FC = () => {
         videos: data.map(convertToDisplayVideo),
       }]);
     }
-  }, [debouncedSearchKeyword, loadVideos, videosApi]);
+  }, [debouncedSearchKeyword, loadVideos]);
 
   // 处理视频点击 (Handle video click)
   const handleVideoClick = useCallback(async (videoId: number) => {

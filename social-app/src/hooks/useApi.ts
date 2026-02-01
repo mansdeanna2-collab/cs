@@ -220,9 +220,13 @@ export function useApi<T>(): UseApiReturn<T> {
 
       const url = `${getApiBaseUrl()}${endpoint}`;
       const cacheKey = getCacheKey(url, fetchOptions);
+      
+      // 可缓存的HTTP方法 (Cacheable HTTP methods)
+      const method = (fetchOptions.method || 'GET').toUpperCase();
+      const isCacheableMethod = method === 'GET' || method === 'HEAD';
 
       // 检查缓存 (Check cache)
-      if (enableCache && fetchOptions.method !== 'POST') {
+      if (enableCache && isCacheableMethod) {
         const cachedData = getFromCache<T>(cacheKey);
         if (cachedData !== null) {
           if (mountedRef.current) {
@@ -247,7 +251,7 @@ export function useApi<T>(): UseApiReturn<T> {
           const data = response.data;
 
           // 缓存成功响应 (Cache successful response)
-          if (enableCache && fetchOptions.method !== 'POST') {
+          if (enableCache && isCacheableMethod) {
             setToCache(cacheKey, data, cacheDuration);
           }
 
