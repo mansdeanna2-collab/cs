@@ -558,8 +558,8 @@ android {
     defaultConfig {
         // 最低支持 Android 6.0 (API 23)，确保广泛兼容性
         minSdkVersion 23
-        // 目标 Android 14 (API 34)
-        targetSdkVersion 34
+        // 目标 Android API 35 (满足 AndroidX 依赖要求)
+        targetSdkVersion 35
         // 版本号
         versionCode 1
         versionName "1.0.0"
@@ -624,18 +624,18 @@ KOTLIN_FIX
         fi
     fi
     
-    # 修复 variables.gradle SDK 版本
+    # 检查 variables.gradle SDK 版本
+    # 确保使用 Android SDK 35 以满足 AndroidX 依赖要求
     if [ -f "android/variables.gradle" ]; then
-        # 将 compileSdkVersion 35 改为 34
-        if grep -q 'compileSdkVersion = 35' "android/variables.gradle"; then
-            sed -i 's/compileSdkVersion = 35/compileSdkVersion = 34/' "android/variables.gradle"
-            echo "   已将 compileSdkVersion 从 35 更新为 34"
+        # 显示当前 SDK 版本配置
+        SDK_CONFIG=$(grep -E 'compileSdkVersion|targetSdkVersion|minSdkVersion' "android/variables.gradle" 2>/dev/null)
+        if [ -n "$SDK_CONFIG" ]; then
+            echo "   当前 SDK 版本配置:"
+            echo "$SDK_CONFIG" | sed 's/^/   /'
+        else
+            echo "   未找到 SDK 版本配置"
         fi
-        # 将 targetSdkVersion 35 改为 34
-        if grep -q 'targetSdkVersion = 35' "android/variables.gradle"; then
-            sed -i 's/targetSdkVersion = 35/targetSdkVersion = 34/' "android/variables.gradle"
-            echo "   已将 targetSdkVersion 从 35 更新为 34"
-        fi
+        echo "✅ variables.gradle SDK 版本检查完成 (使用 Android SDK 35)"
     fi
 }
 
